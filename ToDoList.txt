@@ -1,0 +1,33 @@
+Functionality List
+
+Settings Page
+- [ ] Preferences of categories 
+    * Grid View
+    * If clicked —> save to preferences
+
+Home Page
+- [ ] Displaying weather 
+    * Yahoo weather API
+- [ ] Displaying top 3 suggestions
+- [ ] Displaying suggestion for clothing based on weather
+
+Suggestions Page
+- [ ] List of all suggestions
+    * filter based on preferences
+    * Places API 
+    * filter based on weather 
+    * display in a list view
+
+Detailed Page
+- [ ] Display picture of activity
+- [ ] Display details of activity (hours, website, address)
+    * Places API
+    * Grab correct information to display to user
+
+Notifications
+- [ ] Notify user every morning about suggestions for the day
+
+Map
+- [ ] Display Google Maps
+    * Displaying activities of the day on map
+
