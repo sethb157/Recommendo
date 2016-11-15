@@ -1,4 +1,4 @@
-package edu.calpoly.cpirvu.preferencessetup;
+package edu.calpoly.recommendo.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +9,9 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import edu.calpoly.recommendo.adapters.ImageAdapter;
+import edu.calpoly.recommendo.R;
 
 public class Preferences extends AppCompatActivity {
 

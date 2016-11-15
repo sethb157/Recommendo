@@ -1,4 +1,4 @@
-package edu.calpoly.cpirvu.preferencessetup;
+package edu.calpoly.recommendo;
 
 import org.junit.Test;
 
