@@ -69,6 +69,7 @@ public class Preferences extends AppCompatActivity {
             }
         });
 
+
     }
 
     @Override
@@ -79,6 +80,8 @@ public class Preferences extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("LOGGING!!!", prefList.get(0));
+        for (int i = 0; i < prefList.size(); i++) {
+            Log.d("LOGGING!!!", "Position " + i + ": " + prefList.get(i));
+        }
     }
 }
