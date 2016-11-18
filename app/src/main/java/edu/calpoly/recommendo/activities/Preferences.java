@@ -16,6 +16,11 @@ import edu.calpoly.recommendo.R;
 public class Preferences extends AppCompatActivity {
 
     public static ArrayList<String> prefList;
+    public static final String BIKING = "biking";
+    public static final String COFFEE = "coffee";
+    public static final String FITNESS = "fitness";
+    public static final String RUNNING = "running";
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,39 +40,40 @@ public class Preferences extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 Toast.makeText(Preferences.this, "The position is " + position, Toast.LENGTH_SHORT).show();
                 if (position == 0) {
-                    if (prefList.contains("biking")) {
-                        prefList.remove("biking");
+                    if (prefList.contains(BIKING)) {
+                        prefList.remove(BIKING);
                     }
                     else {
-                        prefList.add("biking");
+                        prefList.add(BIKING);
                     }
                 }
                 else if (position == 1) {
-                    if (prefList.contains("coffee")) {
-                        prefList.remove("coffee");
+                    if (prefList.contains(COFFEE)) {
+                        prefList.remove(COFFEE);
                     }
                     else {
-                        prefList.add("coffee");
+                        prefList.add(COFFEE);
                     }
                 }
                 else if (position == 2) {
-                    if (prefList.contains("fitness")) {
-                        prefList.remove("fitness");
+                    if (prefList.contains(FITNESS)) {
+                        prefList.remove(FITNESS);
                     }
                     else {
-                        prefList.add("fitness");
+                        prefList.add(FITNESS);
                     }
                 }
                 else if (position == 3) {
-                    if (prefList.contains("running")) {
-                        prefList.remove("running");
+                    if (prefList.contains(RUNNING)) {
+                        prefList.remove(RUNNING);
                     }
                     else {
-                        prefList.add("running");
+                        prefList.add(RUNNING);
                     }
                 }
             }
         });
+
 
 
     }
