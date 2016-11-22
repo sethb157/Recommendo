@@ -10,19 +10,26 @@
         android:gravity="center"
         android:paddingTop="15dp"
         android:paddingBottom="30dp"
-        android:textSize="30dp"
+        android:textSize="45dp"
         android:text="@string/PreferencesTitle">
     </TextView>
 
     <GridView
         android:id="@+id/gridview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:numColumns="4"
-        android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp"
+        android:layout_height="wrap_content"
+        android:numColumns="3"
+        android:verticalSpacing="30dp"
+        android:horizontalSpacing="5dp"
         android:stretchMode="columnWidth"
         android:gravity="center">
     </GridView>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:id="@+id/preferences_done"
+        android:text="@string/done">
+    </Button>
 
 </LinearLayout>
