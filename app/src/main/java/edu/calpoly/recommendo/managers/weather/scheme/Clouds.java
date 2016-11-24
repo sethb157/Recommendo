@@ -1,5 +1,5 @@
 
-package edu.calpoly.recommendo.weather.scheme;
+package edu.calpoly.recommendo.managers.weather.scheme;
 
 import java.util.HashMap;
 import java.util.Map;

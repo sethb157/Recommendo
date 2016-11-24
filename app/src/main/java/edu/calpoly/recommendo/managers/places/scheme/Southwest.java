@@ -1,32 +1,14 @@
 
-package edu.calpoly.recommendo.weather.scheme;
+package edu.calpoly.recommendo.managers.places.scheme;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Coord {
+public class Southwest {
 
-    private Double lon;
     private Double lat;
+    private Double lng;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
-    /**
-     * 
-     * @return
-     *     The lon
-     */
-    public Double getLon() {
-        return lon;
-    }
-
-    /**
-     * 
-     * @param lon
-     *     The lon
-     */
-    public void setLon(Double lon) {
-        this.lon = lon;
-    }
 
     /**
      * 
@@ -44,6 +26,24 @@ public class Coord {
      */
     public void setLat(Double lat) {
         this.lat = lat;
+    }
+
+    /**
+     * 
+     * @return
+     *     The lng
+     */
+    public Double getLng() {
+        return lng;
+    }
+
+    /**
+     * 
+     * @param lng
+     *     The lng
+     */
+    public void setLng(Double lng) {
+        this.lng = lng;
     }
 
     public Map<String, Object> getAdditionalProperties() {

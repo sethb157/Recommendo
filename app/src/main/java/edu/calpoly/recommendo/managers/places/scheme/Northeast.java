@@ -1,50 +1,49 @@
 
-package edu.calpoly.recommendo.weather.scheme;
+package edu.calpoly.recommendo.managers.places.scheme;
 
 import java.util.HashMap;
 import java.util.Map;
 
+public class Northeast {
 
-public class Wind {
-
-    private Double speed;
-    private Double deg;
+    private Double lat;
+    private Double lng;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
      * 
      * @return
-     *     The speed
+     *     The lat
      */
-    public Double getSpeed() {
-        return speed;
+    public Double getLat() {
+        return lat;
     }
 
     /**
      * 
-     * @param speed
-     *     The speed
+     * @param lat
+     *     The lat
      */
-    public void setSpeed(Double speed) {
-        this.speed = speed;
+    public void setLat(Double lat) {
+        this.lat = lat;
     }
 
     /**
      * 
      * @return
-     *     The deg
+     *     The lng
      */
-    public Double getDeg() {
-        return deg;
+    public Double getLng() {
+        return lng;
     }
 
     /**
      * 
-     * @param deg
-     *     The deg
+     * @param lng
+     *     The lng
      */
-    public void setDeg(Double deg) {
-        this.deg = deg;
+    public void setLng(Double lng) {
+        this.lng = lng;
     }
 
     public Map<String, Object> getAdditionalProperties() {
