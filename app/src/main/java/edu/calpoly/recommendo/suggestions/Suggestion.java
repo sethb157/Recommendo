@@ -1,4 +1,4 @@
-package edu.calpoly.recommendo;
+package edu.calpoly.recommendo.suggestions;
 
 /**
  * Created by Dan on 11/22/2016.
