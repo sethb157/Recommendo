@@ -1,10 +1,7 @@
-package edu.calpoly.recommendo.managers;
-
-import android.os.Parcelable;
+package edu.calpoly.recommendo.suggestions;
 
 import java.util.ArrayList;
 
-import edu.calpoly.recommendo.Suggestion;
 import edu.calpoly.recommendo.activities.Preferences;
 
 /**
