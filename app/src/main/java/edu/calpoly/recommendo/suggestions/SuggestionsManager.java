@@ -1,5 +1,20 @@
 package edu.calpoly.recommendo.suggestions;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+
 import java.util.ArrayList;
 
 import edu.calpoly.recommendo.activities.Preferences;
@@ -8,7 +23,9 @@ import edu.calpoly.recommendo.activities.Preferences;
  * Created by Dan on 11/22/2016.
  */
 
-public class SuggestionsManager {
+public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener{
+    private static final String TAG = "SuggestionsManager";
+    
     public static String TYPE_CLOTHES = "clothing";
     public static String TYPE_ACTIVITY = "activity";
 
@@ -35,6 +52,12 @@ public class SuggestionsManager {
         return mSuggestions != null ? mSuggestions : new ArrayList<Suggestion>();
     }
 
+    private ArrayList<SuggestionListener> listeners = new ArrayList<>();
+    public void addListener(SuggestionListener listener) {listeners.add(listener);}
+    public void removeListener(SuggestionListener listener) {
+        listeners.remove(listener);
+    }
+
     public static void updateSuggestions() {
 //        Weather weather = WeatherManager.getWeather();
 //        double temperature = weather.getTemperature();
@@ -54,9 +77,92 @@ public class SuggestionsManager {
 
         addClothing(suggestions, avgTemp, rainOrSnow);
         addActivities(suggestions, avgTemp, rainOrSnow);
-        
+
         mSuggestions = suggestions;
     }
+
+
+
+
+    /* Location Services*/
+    private GoogleApiClient googleApiClient;
+    private LocationRequest locationRequest;
+    private Location lastLocation;
+    private final int numSecondsRefresh = 600;
+
+    /**
+     * If locations are not being fetched, this begins fetching
+     * Location updates are done via the suggestion listener interface
+     */
+
+    public void fetchLocation(final Context context) throws LocationServicesNotEnabledException {
+        // Make sure location can be fetched
+        if (!locationEnabled(context)) throw new LocationServicesNotEnabledException("Location services are not enabled. Please request them before calling this");
+
+        // Either begin fetching locations or notify of last location found
+        if (googleApiClient == null) {
+            googleApiClient = new GoogleApiClient.Builder(context.getApplicationContext())
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+            googleApiClient.connect();
+        }
+        else if (lastLocation != null) {
+            for (SuggestionListener listener : listeners) {
+                listener.locationChanged(lastLocation);
+            }
+        }
+    }
+
+    /**
+     * Helper function for verbose permission garbage
+     * @return Value indicates whether permissions have been granted
+     */
+    public boolean locationEnabled(final Context context) {
+        return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        locationRequest = new LocationRequest();
+        locationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        locationRequest.setInterval(1000 * numSecondsRefresh);
+
+        //noinspection MissingPermission because the application should crash if this code has been reached without permission
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient,locationRequest, this);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.d(TAG, "onConnectionSuspended: ");
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d(TAG, "onConnectionFailed: ");
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        lastLocation = location;
+        for (SuggestionListener listener : listeners) {
+            listener.locationChanged(location);
+        }
+    }
+
+
+    public class LocationServicesNotEnabledException extends Exception {
+        public LocationServicesNotEnabledException(String message) {
+            super(message);
+        }
+
+    }
+
+    /* End location stuff*/
+
+
+
 
 //    if (prefList.contains(Preferences.BIKING)) {
 //        // park
@@ -309,6 +415,10 @@ public class SuggestionsManager {
             }
         }
 
+    }
+
+    public interface SuggestionListener {
+        void locationChanged(Location location);
     }
 
 }
