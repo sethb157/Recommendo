@@ -5,4 +5,7 @@
     <string name="network_error_service_unavailable">Network issues occurred. Service currently unavailable.</string>
     <string name="invalid_location">Invalid location used.</string>
     <string name="no_address_found">No address found.</string>
+    <string name="text_main">Home</string>
+    <string name="text_map">Map</string>
+    <string name="text_pref">Preferences</string>
 </resources>

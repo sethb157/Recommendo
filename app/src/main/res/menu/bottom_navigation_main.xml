@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_main"
+        android:enabled="true"
+        android:title="@string/text_main"
+        android:icon="@drawable/home128"/>
+
+    <item
+        android:id="@+id/action_map"
+        android:enabled="true"
+        android:title="@string/text_map"
+        android:icon="@drawable/home128"/>
+
+    <item
+        android:id="@+id/action_pref"
+        android:enabled="true"
+        android:title="@string/text_pref"
+        android:icon="@drawable/home128"/>
 
 </menu>
