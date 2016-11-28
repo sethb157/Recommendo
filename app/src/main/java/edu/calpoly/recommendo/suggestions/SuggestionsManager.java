@@ -12,20 +12,24 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 
 import edu.calpoly.recommendo.activities.Preferences;
+import edu.calpoly.recommendo.managers.weather.WeatherFetcher;
+import edu.calpoly.recommendo.managers.weather.scheme.WeatherJSON;
 
 /**
  * Created by Dan on 11/22/2016.
  */
 
-public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener{
+public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, WeatherFetcher.WeatherFetcherListener {
     private static final String TAG = "SuggestionsManager";
-    
+    private static SuggestionsManager suggestionsManager;
+
     public static String TYPE_CLOTHES = "clothing";
     public static String TYPE_ACTIVITY = "activity";
 
@@ -53,9 +57,23 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
     }
 
     private ArrayList<SuggestionListener> listeners = new ArrayList<>();
-    public void addListener(SuggestionListener listener) {listeners.add(listener);}
+
+    public void addListener(SuggestionListener listener) {
+        listeners.add(listener);
+    }
+
     public void removeListener(SuggestionListener listener) {
         listeners.remove(listener);
+    }
+
+    // Private for singleton purposes
+    private SuggestionsManager() {
+        super();
+    }
+
+    public static SuggestionsManager getSharedManager() {
+        if (suggestionsManager == null) suggestionsManager = new SuggestionsManager();
+        return suggestionsManager;
     }
 
     public static void updateSuggestions() {
@@ -82,8 +100,6 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
     }
 
 
-
-
     /* Location Services*/
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
@@ -95,10 +111,7 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
      * Location updates are done via the suggestion listener interface
      */
 
-    public void fetchLocation(final Context context) throws LocationServicesNotEnabledException {
-        // Make sure location can be fetched
-        if (!locationEnabled(context)) throw new LocationServicesNotEnabledException("Location services are not enabled. Please request them before calling this");
-
+    public void fetchLocation(final Context context) {
         // Either begin fetching locations or notify of last location found
         if (googleApiClient == null) {
             googleApiClient = new GoogleApiClient.Builder(context.getApplicationContext())
@@ -107,8 +120,7 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
                     .addApi(LocationServices.API)
                     .build();
             googleApiClient.connect();
-        }
-        else if (lastLocation != null) {
+        } else if (lastLocation != null) {
             for (SuggestionListener listener : listeners) {
                 listener.locationChanged(lastLocation);
             }
@@ -120,17 +132,17 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
      * @return Value indicates whether permissions have been granted
      */
     public boolean locationEnabled(final Context context) {
-        return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         locationRequest = new LocationRequest();
-        locationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         locationRequest.setInterval(1000 * numSecondsRefresh);
 
-        //noinspection MissingPermission because the application should crash if this code has been reached without permission
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient,locationRequest, this);
+        //noinspection MissingPermission
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
     }
 
     @Override
@@ -162,6 +174,47 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
     /* End location stuff*/
 
 
+
+    /* Begin Weather*/
+    private WeatherFetcher weatherFetcher;
+
+
+    /**
+     * Updates WeatherFetcher with current location and then fetches new Weather result
+     * Relays update via callback methods from SuggestionsManager
+     */
+    public void fetchWeather(final Context context) {
+        // Make sure weatherFetcher exists
+        if (weatherFetcher == null) {
+            weatherFetcher = new WeatherFetcher();
+            weatherFetcher.listener = this;
+        }
+
+        // If no location has been fetched, then break to fetch weather
+        if (lastLocation == null) {
+            fetchLocation(context);
+            return;
+        }
+
+        weatherFetcher.latitude = Double.toString(lastLocation.getLatitude());
+        weatherFetcher.longitude = Double.toString(lastLocation.getLatitude());
+        weatherFetcher.fetchWeather();
+
+    }
+
+    @Override
+    public void weatherFetchFailed() {
+
+    }
+
+    @Override
+    public void weatherFetchSucceeded(WeatherJSON response) {
+        for (SuggestionListener listener : listeners) {
+            listener.weatherFetched(response);
+        }
+    }
+
+    /*End Weather*/
 
 
 //    if (prefList.contains(Preferences.BIKING)) {
@@ -419,6 +472,7 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
 
     public interface SuggestionListener {
         void locationChanged(Location location);
+        void weatherFetched(WeatherJSON weatherObject);
     }
 
 }

@@ -30,22 +30,25 @@
             >
 
             <TextView
+                android:id="@+id/city_name_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:textColor="@color/panelTextColor"
-                android:text="San Luis Obispo"
+                android:text="City Unknown"
                 android:textSize="30sp"
+                android:textStyle="bold"
                 android:maxLines="1"
                 android:ellipsize="middle"
                 android:breakStrategy="simple"
                 />
 
             <TextView
+                android:id="@+id/weather_desc_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/panelTextColor"
-                android:text="74&#xb0; - Sunny"
+                android:text="Weather Unknown"
                 android:textStyle="italic"
                 android:textSize="25sp"/>
         </LinearLayout>

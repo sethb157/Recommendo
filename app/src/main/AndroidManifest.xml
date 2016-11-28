@@ -18,8 +18,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.Preferences"></activity>
+
+        <service android:name=".FetchAddressIntentService"
+            android:exported="false"/>
     </application>
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
 </manifest>

@@ -2,4 +2,7 @@
     <string name="app_name">Recommendo</string>
     <string name="PreferencesTitle">What do you like to do?</string>
     <string name="done">Done</string>
+    <string name="network_error_service_unavailable">Network issues occurred. Service currently unavailable.</string>
+    <string name="invalid_location">Invalid location used.</string>
+    <string name="no_address_found">No address found.</string>
 </resources>
