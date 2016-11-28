@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
 
         suggestionsManager = SuggestionsManager.getSharedManager();
 
+        fetchNewDataIfPossible();
         mSuggestions = suggestionsManager.getSuggestions();
 
         rv = (RecyclerView) findViewById(R.id.rv);
@@ -85,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
 
         adapter = new MyAdapter(mSuggestions);
         rv.setAdapter(adapter);
+
+        //String x = mSuggestions.get(0).getName();
 
     }
 

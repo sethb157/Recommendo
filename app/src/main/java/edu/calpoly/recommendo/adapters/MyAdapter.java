@@ -18,8 +18,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     private ArrayList<Suggestion> mSuggestions;
 
-    public MyAdapter(ArrayList<Suggestion> entries) {
-        mSuggestions = entries;
+    public MyAdapter(ArrayList<Suggestion> suggestions) {
+        mSuggestions = suggestions;
     }
 
     @Override
