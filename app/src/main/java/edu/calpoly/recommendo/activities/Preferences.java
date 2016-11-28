@@ -134,6 +134,7 @@ public class Preferences extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //launch new intent
+                finish();
             }
         });
 
