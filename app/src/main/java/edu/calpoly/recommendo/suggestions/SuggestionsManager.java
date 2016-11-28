@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.util.ArrayMap;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -15,10 +16,14 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
 
 import java.util.ArrayList;
 
 import edu.calpoly.recommendo.activities.Preferences;
+import edu.calpoly.recommendo.managers.PreferencesManager;
+import edu.calpoly.recommendo.managers.places.PlacesFetcher;
+import edu.calpoly.recommendo.managers.places.scheme.PlacesResult;
 import edu.calpoly.recommendo.managers.weather.WeatherFetcher;
 import edu.calpoly.recommendo.managers.weather.scheme.WeatherJSON;
 
@@ -26,7 +31,7 @@ import edu.calpoly.recommendo.managers.weather.scheme.WeatherJSON;
  * Created by Dan on 11/22/2016.
  */
 
-public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, WeatherFetcher.WeatherFetcherListener {
+public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, WeatherFetcher.WeatherFetcherListener, PlacesFetcher.PlacesFetcherListener {
     private static final String TAG = "SuggestionsManager";
     private static SuggestionsManager suggestionsManager;
 
@@ -50,25 +55,28 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
     public static String BOTTOM_SHORTS = "Shorts";
     public static String BOTTOM_SNOWPANTS = "Snow Pants";
 
-    private static ArrayList<Suggestion> mSuggestions;
+    private PreferencesManager preferencesManager;
+    private Context preferencesContext;
 
+    private static ArrayList<Suggestion> mSuggestions;
     public static ArrayList<Suggestion> getSuggestions() {
         return mSuggestions != null ? mSuggestions : new ArrayList<Suggestion>();
     }
 
     private ArrayList<SuggestionListener> listeners = new ArrayList<>();
+    public void addListener(SuggestionListener listener) {listeners.add(listener);}
+    public void removeListener(SuggestionListener listener) {listeners.remove(listener);}
 
-    public void addListener(SuggestionListener listener) {
-        listeners.add(listener);
-    }
-
-    public void removeListener(SuggestionListener listener) {
-        listeners.remove(listener);
-    }
+    private PlacesFetcher placesFetcher;
 
     // Private for singleton purposes
     private SuggestionsManager() {
         super();
+
+        preferencesManager = PreferencesManager.getPreferencesManager();
+
+        placesFetcher = new PlacesFetcher();
+        placesFetcher.listener = this;
     }
 
     public static SuggestionsManager getSharedManager() {
@@ -77,30 +85,17 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
     }
 
     private void updateSuggestions() {
-        double temperature = lastWeatherRetrieved.getMain().getTemp();
-        double maxTemp = lastWeatherRetrieved.getMain().getTempMax();
-        double minTemp = lastWeatherRetrieved.getMain().getTempMin();
-        double avgTemp = (maxTemp + minTemp) / 2;
-        boolean rainOrSnow = false; // HARD CODED
 
-//        for (SuggestionListener litener : listeners) {
-//            listener.newDataFetched();
-//        }
-//        return;
-
-//        ArrayList<Suggestion> suggestions = new ArrayList<Suggestion>();
-//        ArrayList<String> prefList = Preferences.prefList;
-//
-//        addClothing(suggestions, avgTemp, rainOrSnow);
-//        addActivities(suggestions, avgTemp, rainOrSnow);
-//
-//        mSuggestions = suggestions;
     }
 
+//    addClothing(suggestions, avgTemp, rainOrSnow);
+//        addActivities(suggestions, avgTemp, rainOrSnow);
     /**
      * Call this function to get new weather and suggestions, based on location
      */
     public void fetchNewData(final Context context) {
+        if (preferencesContext == null) preferencesContext = context.getApplicationContext();
+
         // When new data is requested, fetch new location
         // A new location will trigger new weather data being fetched
         fetchLocation(context);
@@ -169,6 +164,11 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
         fetchWeather();
     }
 
+    @Override
+    public void placesFetchFinished(PlacesFetcher fetcher, ArrayMap<String, PlacesResult> fetchResults) {
+
+    }
+
 
     public class LocationServicesNotEnabledException extends Exception {
         public LocationServicesNotEnabledException(String message) {
@@ -216,67 +216,22 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
     /*End Weather*/
 
 
-//    if (prefList.contains(Preferences.BIKING)) {
-//        // park
-//
-//    }
-//    if (prefList.contains(Preferences.COFFEE)) {
-//        // cafe
-//
-//    }
-//    if (prefList.contains(Preferences.FITNESS)) {
-//        // gym
-//
-//    }
-//    if (prefList.contains(Preferences.GOLF)) {
-//        // search: golf
-//
-//    }
-//    if (prefList.contains(Preferences.HIKING)) {
-//        // search: hiking area
-//
-//    }
-//    if (prefList.contains(Preferences.MOVIES)) {
-//        // movie_rental
-//        // movie_theater
-//
-//    }
-//    if (prefList.contains(Preferences.PIZZA)) {
-//        // meal_delivery
-//        // meal_takeaway
-//
-//    }
-//    if (prefList.contains(Preferences.RESTAURANT)) {
-//        // restaurant
-//
-//    }
-//    if (prefList.contains(Preferences.RUNNING)) {
-//        // park
-//        // radius: 1 mile away
-//
-//    }
-//    if (prefList.contains(Preferences.SWIMMING)) {
-//        // search: swimming pool
-//
-//    }
-    private static void addActivities(ArrayList<Suggestion> suggestions, double avgTemp, boolean rainOrSnow) {
-        ArrayList<String> prefList = Preferences.prefList;
-        if (prefList == null) return;
+    private ArrayList<String> getSearchTerms(double avgTemp, boolean rainOrSnow) {
+        ArrayList<String> prefList = preferencesManager.getPrefList(preferencesContext);
+        ArrayList<String> searchTerms = new ArrayList<>();
+        if (prefList == null) return searchTerms;
         if (avgTemp <= 30) {
             if (prefList.contains(Preferences.MOVIES)) {
-                // movie_rental
-                // movie_theater
-
+                searchTerms.add("movie_rental");
+                searchTerms.add("movie_theater");
             }
             if (prefList.contains(Preferences.COFFEE)) {
-                // cafe
-
+                searchTerms.add("cafe");
             }
 
             if (prefList.contains(Preferences.PIZZA)) {
                 // meal_delivery
                 // meal_takeaway
-
             }
         }
         else if (avgTemp <= 55) {

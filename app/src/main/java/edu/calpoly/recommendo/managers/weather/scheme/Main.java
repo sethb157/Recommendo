@@ -1,6 +1,8 @@
 
 package edu.calpoly.recommendo.managers.weather.scheme;
 
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,8 +74,7 @@ public class Main {
      * @return
      *     The tempMin
      */
-    public Double getTempMin() {
-        return tempMin;
+    public Double getTempMin() {return tempMin;
     }
 
     /**

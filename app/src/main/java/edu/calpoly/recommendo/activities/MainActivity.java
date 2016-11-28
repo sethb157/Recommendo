@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
 
     private void updateWeatherDescription(WeatherJSON weatherObject) {
         String weatherDesc = weatherObject.getMain().getTemp().intValue()
-                + "\u00B0 - " + weatherObject.getWeather().get(0).getMain();
+                + "\u00B0 - " + weatherObject.getWeather().get(0).getDescription();
         weatherTextView.setText(weatherDesc, TextView.BufferType.EDITABLE);
     }
 

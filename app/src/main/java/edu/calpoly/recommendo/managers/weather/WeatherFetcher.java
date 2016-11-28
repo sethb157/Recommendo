@@ -48,6 +48,7 @@ public class WeatherFetcher {
             // When response returns, let the caller know of the result
             @Override
             public void onResponse(Call<WeatherJSON> call, Response<WeatherJSON> response) {
+                Log.d(TAG, "onResponse: " + call.request().toString());
                 if (listenerPresent()) listener.weatherFetchSucceeded(response.body());
             }
             @Override
