@@ -105,6 +105,7 @@ public class MapActivity extends Activity
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
+        mMap.setOnMarkerClickListener(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             // TODO: Consider calling
@@ -128,10 +129,10 @@ public class MapActivity extends Activity
 
         SuggestionsManager suggestionsManager = SuggestionsManager.getSharedManager();
 
-        suggestionsManager.fetchNewData(this);
+        //suggestionsManager.fetchNewData(this);
         mSuggestions = suggestionsManager.getSuggestions();
         for (Suggestion item : mSuggestions) {
-            if (item.getType() == SuggestionsManager.TYPE_ACTIVITY) {
+            if (item.getType() != null && item.getType().equals(SuggestionsManager.TYPE_ACTIVITY)) {
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(item.getLatitude(), item.getLongitude()))
                 .title(item.getName()));
@@ -142,6 +143,19 @@ public class MapActivity extends Activity
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+
+        String title = marker.getTitle();
+        int key = 0;
+        for (Suggestion item : mSuggestions) {
+            if (item.getName() != null && item.getName().equals(title)) {
+                Intent myIntent = new Intent(getApplicationContext(), DetailSuggestionActivity.class);
+                myIntent.putExtra("key", key); //Optional parameters
+                startActivity(myIntent);
+                break;
+            }
+            key++;
+        }
+
         return false;
     }
 
