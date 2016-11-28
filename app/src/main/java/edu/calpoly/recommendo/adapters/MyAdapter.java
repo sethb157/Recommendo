@@ -16,10 +16,11 @@ import edu.calpoly.recommendo.suggestions.Suggestion;
 
 public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
-    private ArrayList<Suggestion> mSuggestions;
+    public ArrayList<Suggestion> mSuggestions;
 
-    public MyAdapter(ArrayList<Suggestion> suggestions) {
-        mSuggestions = suggestions;
+    public MyAdapter() {
+        // Begin with empty arraylist
+        mSuggestions = new ArrayList<>();
     }
 
     @Override
