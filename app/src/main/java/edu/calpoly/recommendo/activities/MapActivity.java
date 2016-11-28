@@ -16,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -25,8 +26,15 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
 
 import edu.calpoly.recommendo.R;
+import edu.calpoly.recommendo.suggestions.Suggestion;
+import edu.calpoly.recommendo.suggestions.SuggestionsManager;
+
+import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 /**
  * Created by Dan on 11/27/2016.
@@ -38,6 +46,7 @@ public class MapActivity extends Activity
     private GoogleMap mMap;
     private LocationManager mLocationManager;
     private Location mLocation;
+    private ArrayList<Suggestion> mSuggestions;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,7 +124,18 @@ public class MapActivity extends Activity
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
                 mMap.animateCamera(cameraUpdate);
             }
+        }
 
+        SuggestionsManager suggestionsManager = SuggestionsManager.getSharedManager();
+
+        suggestionsManager.fetchNewData(this);
+        mSuggestions = suggestionsManager.getSuggestions();
+        for (Suggestion item : mSuggestions) {
+            if (item.getType() == SuggestionsManager.TYPE_ACTIVITY) {
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(item.getLatitude(), item.getLongitude()))
+                .title(item.getName()));
+            }
         }
 
     }
