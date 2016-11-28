@@ -31,7 +31,7 @@ public class PlacesFetcher {
     public ArrayList<String> placeTypes = new ArrayList<>();
     // Default values for Tokyo, Japan. Don't forget to set these
     public String latitude = "35.6895", longitude = "139.6917";
-    public int radius = 500;
+    public int radius = 1600;
 
     /* For results and monitoring calls*/
     public PlacesFetcherListener listener;
@@ -69,7 +69,7 @@ public class PlacesFetcher {
                 @Override
                 public void onResponse(Call<PlacesResult> call, Response<PlacesResult> response) {
                     fetchResultsMap.put(placeType, response.body());
-                    Log.d(TAG, "onResponse: " + placeType + "finishedFetching");
+                    Log.d(TAG, "onResponse: " + placeType + " finishedFetching");
                     callFinished(call);
 
                 }

@@ -24,6 +24,7 @@ import edu.calpoly.recommendo.activities.Preferences;
 import edu.calpoly.recommendo.managers.PreferencesManager;
 import edu.calpoly.recommendo.managers.places.PlacesFetcher;
 import edu.calpoly.recommendo.managers.places.scheme.PlacesResult;
+import edu.calpoly.recommendo.managers.places.scheme.Result;
 import edu.calpoly.recommendo.managers.weather.WeatherFetcher;
 import edu.calpoly.recommendo.managers.weather.scheme.WeatherJSON;
 
@@ -79,13 +80,49 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
         placesFetcher.listener = this;
     }
 
+    /**
+     *
+     * @return Singleton instance
+     */
     public static SuggestionsManager getSharedManager() {
         if (suggestionsManager == null) suggestionsManager = new SuggestionsManager();
         return suggestionsManager;
     }
 
-    private void updateSuggestions() {
 
+    /**
+     * Updates places fetcher and then fetches new places
+     */
+    private void updateSuggestions() {
+        placesFetcher.longitude = Double.toString(lastLocation.getLongitude());
+        placesFetcher.latitude = Double.toString(lastLocation.getLatitude());
+        placesFetcher.placeTypes = getSearchTerms(lastWeatherRetrieved.getMain().getTemp(), false);
+        placesFetcher.fetchPlaces();
+    }
+
+    @Override
+    public void placesFetchFinished(PlacesFetcher fetcher, ArrayMap<String, PlacesResult> fetchResults) {
+        ArrayList<Suggestion> suggestions = new ArrayList<>();
+
+        // Add clothing suggestions first
+        addClothing(suggestions, lastWeatherRetrieved.getMain().getTemp(), false);
+
+        // Parse through fetch results and generate new suggestions
+        for (String searchTerm : fetchResults.keySet()) {
+            PlacesResult placesResult = fetchResults.get(searchTerm);
+            for (Result result : placesResult.getResults()) {
+                Suggestion newSuggestion
+                        = new Suggestion(result.getName(), result.getVicinity(), null, TYPE_ACTIVITY, searchTerm,
+                        result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng());
+                suggestions.add(newSuggestion);
+            }
+        }
+
+        // Set new suggestions and alert all listeners of change
+        mSuggestions = suggestions;
+        for (SuggestionListener listener : listeners) {
+            listener.newDataFetched();
+        }
     }
 
 //    addClothing(suggestions, avgTemp, rainOrSnow);
@@ -100,8 +137,6 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
         // A new location will trigger new weather data being fetched
         fetchLocation(context);
     }
-
-
 
     /* Location Services*/
     private GoogleApiClient googleApiClient;
@@ -162,11 +197,6 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
     public void onLocationChanged(Location location) {
         lastLocation = location;
         fetchWeather();
-    }
-
-    @Override
-    public void placesFetchFinished(PlacesFetcher fetcher, ArrayMap<String, PlacesResult> fetchResults) {
-
     }
 
 
@@ -230,143 +260,131 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
             }
 
             if (prefList.contains(Preferences.PIZZA)) {
-                // meal_delivery
-                // meal_takeaway
+                searchTerms.add("meal_delivery");
+                searchTerms.add("meal_takeaway");
             }
         }
         else if (avgTemp <= 55) {
             if (prefList.contains(Preferences.COFFEE)) {
-                // cafe
-
+                searchTerms.add("cafe");
             }
             if (prefList.contains(Preferences.FITNESS)) {
-                // gym
+                searchTerms.add("gym");
 
             }
             if (prefList.contains(Preferences.MOVIES)) {
-                // movie_rental
-                // movie_theater
-
+                searchTerms.add("movie_rental");
+                searchTerms.add("movie_theater");
             }
             if (!rainOrSnow) {
                 if (prefList.contains(Preferences.RESTAURANT)) {
-                    // restaurant
-
+                    searchTerms.add("restaurant");
                 }
             }
             if (prefList.contains(Preferences.PIZZA)) {
-                // meal_delivery
-                // meal_takeaway
-
+                searchTerms.add("meal_delivery");
+                searchTerms.add("meal_takeaway");
             }
         }
         else if (avgTemp <= 70) {
             if (prefList.contains(Preferences.COFFEE)) {
-                // cafe
-
+                searchTerms.add("cafe");
             }
             if (prefList.contains(Preferences.FITNESS)) {
-                // gym
+                searchTerms.add("gym");
 
             }
             if (prefList.contains(Preferences.MOVIES)) {
-                // movie_rental
-                // movie_theater
-
+                searchTerms.add("movie_rental");
+                searchTerms.add("movie_theater");
             }
             if (!rainOrSnow) {
                 if (prefList.contains(Preferences.RUNNING)) {
-                    // park
-                    // radius: 1 mile away
-
+                    searchTerms.add("park");
                 }
                 if (prefList.contains(Preferences.RESTAURANT)) {
-                    // restaurant
-
+                    searchTerms.add("restaurant");
                 }
             }
             if (prefList.contains(Preferences.PIZZA)) {
-                // meal_delivery
-                // meal_takeaway
-
+                searchTerms.add("meal_delivery");
+                searchTerms.add("meal_takeaway");
             }
         }
         else if (avgTemp <= 85) {
 
             if (prefList.contains(Preferences.HIKING)) {
-                // search: hiking area
+                //TODO: Add search terms to placesAPI
 
             }
             if (prefList.contains(Preferences.RUNNING)) {
-                // park
-                // radius: 1 mile away
-
+                searchTerms.add("park");
             }
-            if (!rainOrSnow) {
-                if (prefList.contains(Preferences.BIKING)) {
-                    // park
-
-                }
-                if (prefList.contains(Preferences.SWIMMING)) {
-                    // search: swimming pool
-
-                }
-                if (prefList.contains(Preferences.GOLF)) {
-                    // search: golf
-
-                }
-            }
+//            if (!rainOrSnow) {
+//                if (prefList.contains(Preferences.BIKING)) {
+//                    // park
+//
+//                }
+//                if (prefList.contains(Preferences.SWIMMING)) {
+//                    // search: swimming pool
+//
+//                }
+//                if (prefList.contains(Preferences.GOLF)) {
+//                    // search: golf
+//
+//                }
+//            }
             if (prefList.contains(Preferences.RESTAURANT)) {
-                // restaurant
-
+                searchTerms.add("restaurant");
             }
             if (prefList.contains(Preferences.FITNESS)) {
-                // gym
+                searchTerms.add("gym");
 
             }
             if (prefList.contains(Preferences.MOVIES)) {
-                // movie_rental
-                // movie_theater
+                searchTerms.add("movie_rental");
+                searchTerms.add("movie_theater");
 
             }
             if (prefList.contains(Preferences.PIZZA)) {
-                // meal_delivery
-                // meal_takeaway
-
+                searchTerms.add("meal_delivery");
+                searchTerms.add("meal_takeaway");
             }
 
         }
         else {
-            if (prefList.contains(Preferences.SWIMMING)) {
-                // search: swimming pool
-
-            }
-            if (prefList.contains(Preferences.GOLF)) {
-                // search: golf
-
-            }
-            if (prefList.contains(Preferences.BIKING)) {
-                // park
-
-            }
-            if (prefList.contains(Preferences.HIKING)) {
-                // search: hiking area
-
-            }
-            if (prefList.contains(Preferences.RESTAURANT)) {
-                // restaurant
-
-            }
-            if (prefList.contains(Preferences.FITNESS)) {
-                // gym
-
-            }
-            if (prefList.contains(Preferences.RUNNING)) {
-                // park
-                // radius: 1 mile away
-
-            }
+            searchTerms.add("park");
+//            if (prefList.contains(Preferences.SWIMMING)) {
+//                // search: swimming pool
+//
+//            }
+//            if (prefList.contains(Preferences.GOLF)) {
+//                // search: golf
+//
+//            }
+//            if (prefList.contains(Preferences.BIKING)) {
+//                // park
+//
+//            }
+//            if (prefList.contains(Preferences.HIKING)) {
+//                // search: hiking area
+//
+//            }
+//            if (prefList.contains(Preferences.RESTAURANT)) {
+//                // restaurant
+//
+//            }
+//            if (prefList.contains(Preferences.FITNESS)) {
+//                // gym
+//
+//            }
+//            if (prefList.contains(Preferences.RUNNING)) {
+//                // park
+//                // radius: 1 mile away
+//
+//            }
         }
+        return searchTerms;
     }
 
     private static void addClothing(ArrayList<Suggestion> suggestions, double avgTemp, boolean rainOrSnow) {

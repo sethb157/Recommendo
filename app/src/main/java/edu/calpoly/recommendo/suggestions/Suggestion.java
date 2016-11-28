@@ -4,11 +4,24 @@ package edu.calpoly.recommendo.suggestions;
  * Created by Dan on 11/22/2016.
  */
 public class Suggestion {
+
     private String mName;
     private String mAddress;
     private String mUrl;
     private String mType;
     private String mCategory;
+    private double mLatitude;
+    private double mLongitude;
+
+    public Suggestion(String name, String address, String url, String type, String category, double latitude, double longitude) {
+        mName = name;
+        mAddress = address;
+        mUrl = url;
+        mType = type;
+        mCategory = category;
+        mLatitude = latitude;
+        mLongitude = longitude;
+    }
 
     public Suggestion(String name, String address, String url, String type, String category) {
         mName = name;
@@ -16,6 +29,8 @@ public class Suggestion {
         mUrl = url;
         mType = type;
         mCategory = category;
+        mLatitude = 0;
+        mLongitude = 0;
     }
 
     public String getName() {
@@ -37,4 +52,8 @@ public class Suggestion {
     public String getCategory() {
         return mCategory;
     }
+
+    public Double getLatitude() {return mLatitude;}
+
+    public Double getLongitude() {return mLongitude;}
 }

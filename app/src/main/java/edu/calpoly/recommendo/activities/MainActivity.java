@@ -133,6 +133,11 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
     public void newDataFetched() {
         updateWeatherDescription(suggestionsManager.getLastWeatherRetrieved());
         updateCityName(suggestionsManager.getLastLocation());
+
+        ArrayList<Suggestion> suggestions = suggestionsManager.getSuggestions();
+        for (Suggestion suggestion : suggestions) {
+            Log.d(TAG, "newDataFetched: " + suggestion.getName());
+        }
     }
 
     private void updateWeatherDescription(WeatherJSON weatherObject) {
