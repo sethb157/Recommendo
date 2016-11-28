@@ -1,6 +1,8 @@
 
 package edu.calpoly.recommendo.managers.places.scheme;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +12,7 @@ public class Photo {
 
     private Integer height;
     private List<String> htmlAttributions = new ArrayList<String>();
+    @SerializedName("photo_reference")
     private String photoReference;
     private Integer width;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();

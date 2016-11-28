@@ -19,10 +19,12 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.calpoly.recommendo.activities.Preferences;
 import edu.calpoly.recommendo.managers.PreferencesManager;
 import edu.calpoly.recommendo.managers.places.PlacesFetcher;
+import edu.calpoly.recommendo.managers.places.scheme.Photo;
 import edu.calpoly.recommendo.managers.places.scheme.PlacesResult;
 import edu.calpoly.recommendo.managers.places.scheme.Result;
 import edu.calpoly.recommendo.managers.weather.WeatherFetcher;
@@ -97,7 +99,6 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
         placesFetcher.longitude = Double.toString(lastLocation.getLongitude());
         placesFetcher.latitude = Double.toString(lastLocation.getLatitude());
         placesFetcher.placeTypes = getSearchTerms(lastWeatherRetrieved.getMain().getTemp(), false);
-        Log.d(TAG, "updateSuggestions: ");
         placesFetcher.fetchPlaces();
     }
 
@@ -112,8 +113,16 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
         for (String searchTerm : fetchResults.keySet()) {
             PlacesResult placesResult = fetchResults.get(searchTerm);
             for (Result result : placesResult.getResults()) {
+
+                // First get photo ref
+                String photoRef = "";
+                List<Photo> photos = result.getPhotos();
+                if (!photos.isEmpty()) {
+                    photoRef = photos.get(0).getPhotoReference();
+                }
+
                 Suggestion newSuggestion
-                        = new Suggestion(result.getName(), result.getVicinity(), null, TYPE_ACTIVITY, searchTerm,
+                        = new Suggestion(result.getName(), result.getVicinity(), null, TYPE_ACTIVITY, searchTerm, photoRef,
                         result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng());
                 suggestions.add(newSuggestion);
             }

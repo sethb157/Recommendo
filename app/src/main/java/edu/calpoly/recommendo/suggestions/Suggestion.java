@@ -10,10 +10,11 @@ public class Suggestion {
     private String mUrl;
     private String mType;
     private String mCategory;
+    private String mPicRef;
     private double mLatitude;
     private double mLongitude;
 
-    public Suggestion(String name, String address, String url, String type, String category, double latitude, double longitude) {
+    public Suggestion(String name, String address, String url, String type, String category, String picRef, double latitude, double longitude) {
         mName = name;
         mAddress = address;
         mUrl = url;
@@ -21,6 +22,7 @@ public class Suggestion {
         mCategory = category;
         mLatitude = latitude;
         mLongitude = longitude;
+        mPicRef = picRef;
     }
 
     public Suggestion(String name, String address, String url, String type, String category) {
@@ -52,6 +54,8 @@ public class Suggestion {
     public String getCategory() {
         return mCategory;
     }
+
+    public String getPicRef() {return mPicRef;}
 
     public Double getLatitude() {return mLatitude;}
 
