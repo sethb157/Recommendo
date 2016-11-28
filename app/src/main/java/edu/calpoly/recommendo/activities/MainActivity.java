@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
     private TextView cityTextView;
     private TextView weatherTextView;
 
-    private ArrayList<Suggestion> mSuggestions;
     private RecyclerView rv;
     private static MyAdapter adapter;
 
@@ -78,15 +77,12 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
         suggestionsManager = SuggestionsManager.getSharedManager();
 
         fetchNewDataIfPossible();
-        mSuggestions = suggestionsManager.getSuggestions();
 
         rv = (RecyclerView) findViewById(R.id.rv);
         assert rv != null;
         rv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-
-        adapter = new MyAdapter(mSuggestions);
+        adapter = new MyAdapter();
         rv.setAdapter(adapter);
-
         //String x = mSuggestions.get(0).getName();
 
     }
@@ -137,10 +133,8 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
         updateWeatherDescription(suggestionsManager.getLastWeatherRetrieved());
         updateCityName(suggestionsManager.getLastLocation());
 
-        ArrayList<Suggestion> suggestions = suggestionsManager.getSuggestions();
-        for (Suggestion suggestion : suggestions) {
-            Log.d(TAG, "newDataFetched: " + suggestion.getName());
-        }
+        adapter.mSuggestions = suggestionsManager.getSuggestions();
+        adapter.notifyDataSetChanged();
     }
 
     private void updateWeatherDescription(WeatherJSON weatherObject) {

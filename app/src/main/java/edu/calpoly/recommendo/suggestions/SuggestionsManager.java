@@ -97,6 +97,7 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
         placesFetcher.longitude = Double.toString(lastLocation.getLongitude());
         placesFetcher.latitude = Double.toString(lastLocation.getLatitude());
         placesFetcher.placeTypes = getSearchTerms(lastWeatherRetrieved.getMain().getTemp(), false);
+        Log.d(TAG, "updateSuggestions: ");
         placesFetcher.fetchPlaces();
     }
 
@@ -234,12 +235,13 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
 
     @Override
     public void weatherFetchFailed() {
-
+        Log.d(TAG, "weatherFetchFailed: ");
     }
 
     @Override
     public void weatherFetchSucceeded(WeatherJSON response) {
         // Save last weather retrieved and update suggestions now
+        Log.d(TAG, "weatherFetchSucceeded: ");
         lastWeatherRetrieved = response;
         updateSuggestions();
     }
@@ -384,6 +386,13 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
 //
 //            }
         }
+
+        // If user has no tastes, add some default options
+        if (searchTerms.isEmpty()) {
+            searchTerms.add("liquor_store");
+            searchTerms.add("police");
+        }
+
         return searchTerms;
     }
 
