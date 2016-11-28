@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import edu.calpoly.recommendo.adapters.ImageAdapter;
 import edu.calpoly.recommendo.R;
+import edu.calpoly.recommendo.managers.PreferencesManager;
 
 public class Preferences extends AppCompatActivity {
 
@@ -28,16 +29,15 @@ public class Preferences extends AppCompatActivity {
     public static final String HIKING = "hiking";
     public static final String GOLF = "golf";
 
+    private PreferencesManager preferencesManager;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
 
-        prefList = (ArrayList<String>) getLastCustomNonConfigurationInstance();
-
-        if (prefList == null) {
-            prefList = new ArrayList<String>();
-        }
+        preferencesManager = PreferencesManager.getPreferencesManager();
+        prefList = preferencesManager.getPrefList(this);
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
         gridview.setAdapter(new ImageAdapter(this));
@@ -140,10 +140,6 @@ public class Preferences extends AppCompatActivity {
 
     }
 
-    @Override
-    public ArrayList<String> onRetainCustomNonConfigurationInstance() {
-        return prefList;
-    }
 
     @Override
     protected void onPause() {
@@ -151,5 +147,8 @@ public class Preferences extends AppCompatActivity {
         for (int i = 0; i < prefList.size(); i++) {
             Log.d("LOGGING!!!", "Position " + i + ": " + prefList.get(i));
         }
+
+        // Save preferences here
+        preferencesManager.savePrefList(this);
     }
 }

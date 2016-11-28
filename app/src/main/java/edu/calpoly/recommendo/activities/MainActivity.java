@@ -8,16 +8,25 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.ListView;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.view.View;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 
 
+import java.util.ArrayList;
 
 import edu.calpoly.recommendo.AddressResultReceiver;
 import edu.calpoly.recommendo.FetchAddressIntentService;
 import edu.calpoly.recommendo.R;
+import edu.calpoly.recommendo.adapters.MyAdapter;
 import edu.calpoly.recommendo.managers.weather.scheme.WeatherJSON;
+import edu.calpoly.recommendo.suggestions.Suggestion;
 import edu.calpoly.recommendo.suggestions.SuggestionsManager;
 
 public class MainActivity extends AppCompatActivity implements SuggestionsManager.SuggestionListener, AddressResultReceiver.Receiver{
@@ -28,6 +37,10 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
 
     private TextView cityTextView;
     private TextView weatherTextView;
+
+    private ArrayList<Suggestion> mSuggestions;
+    private RecyclerView rv;
+    private static MyAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +77,14 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
 
         suggestionsManager = SuggestionsManager.getSharedManager();
 
+        mSuggestions = suggestionsManager.getSuggestions();
+
+        rv = (RecyclerView) findViewById(R.id.rv);
+        assert rv != null;
+        rv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+
+        adapter = new MyAdapter(mSuggestions);
+        rv.setAdapter(adapter);
 
     }
 

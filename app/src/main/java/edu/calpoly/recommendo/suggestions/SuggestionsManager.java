@@ -77,23 +77,16 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
     }
 
     private void updateSuggestions() {
-//        Weather weather = WeatherManager.getWeather();
-//        double temperature = weather.getTemperature();
-//        double minTemp = weather.getMinTemp();
-//        double maxTemp = weather.getMaxTemp();
-//        boolean rainOrSnow = weather.IsRainy();
-
-        double temperature = 67; // HARD CODED
-        double maxTemp = 89.4; // HARD CODED
-        double minTemp = 55; // HARD CODED
+        double temperature = lastWeatherRetrieved.getMain().getTemp();
+        double maxTemp = lastWeatherRetrieved.getMain().getTempMax();
+        double minTemp = lastWeatherRetrieved.getMain().getTempMin();
         double avgTemp = (maxTemp + minTemp) / 2;
         boolean rainOrSnow = false; // HARD CODED
 
-        Log.d(TAG, "updateSuggestions: Going to update suggestions");
-        for (SuggestionListener listener : listeners) {
-            listener.newDataFetched();
-        }
-        return;
+//        for (SuggestionListener litener : listeners) {
+//            listener.newDataFetched();
+//        }
+//        return;
 
 //        ArrayList<Suggestion> suggestions = new ArrayList<Suggestion>();
 //        ArrayList<String> prefList = Preferences.prefList;
