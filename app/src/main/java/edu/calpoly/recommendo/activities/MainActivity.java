@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 
@@ -32,11 +34,37 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_main:
+
+                                break;
+                            case R.id.action_map:
+                                Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
+                                startActivity(mapIntent);
+                                break;
+                            case R.id.action_pref:
+                                Intent prefIntent = new Intent(getApplicationContext(), Preferences.class);
+                                startActivity(prefIntent);
+                                break;
+                        }
+                        return false;
+                    }
+                }
+        );
+
         // Get UI handles
         cityTextView = (TextView)findViewById(R.id.city_name_text_view);
         weatherTextView = ((TextView) findViewById(R.id.weather_desc_text_view));
 
         suggestionsManager = SuggestionsManager.getSharedManager();
+
+
     }
 
     @Override

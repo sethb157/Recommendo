@@ -16,6 +16,7 @@
         android:id="@+id/action_pref"
         android:enabled="true"
         android:title="@string/text_pref"
-        android:icon="@drawable/home128"/>
+        android:icon="@drawable/home128"
+        />
 
 </menu>

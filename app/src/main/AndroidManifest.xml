@@ -18,9 +18,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.Preferences"></activity>
+        <activity android:name=".activities.MapActivity"/>
 
         <service android:name=".FetchAddressIntentService"
             android:exported="false"/>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDVoIQUKkrD4eZPmJvfBej0yZL853devcs"/>
     </application>
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
