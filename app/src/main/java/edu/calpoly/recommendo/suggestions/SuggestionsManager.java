@@ -76,13 +76,12 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
         return suggestionsManager;
     }
 
-    public static void updateSuggestions() {
+    private void updateSuggestions() {
 //        Weather weather = WeatherManager.getWeather();
 //        double temperature = weather.getTemperature();
 //        double minTemp = weather.getMinTemp();
 //        double maxTemp = weather.getMaxTemp();
 //        boolean rainOrSnow = weather.IsRainy();
-
 
         double temperature = 67; // HARD CODED
         double maxTemp = 89.4; // HARD CODED
@@ -90,28 +89,45 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
         double avgTemp = (maxTemp + minTemp) / 2;
         boolean rainOrSnow = false; // HARD CODED
 
-        ArrayList<Suggestion> suggestions = new ArrayList<Suggestion>();
-        ArrayList<String> prefList = Preferences.prefList;
+        Log.d(TAG, "updateSuggestions: Going to update suggestions");
+        for (SuggestionListener listener : listeners) {
+            listener.newDataFetched();
+        }
+        return;
 
-        addClothing(suggestions, avgTemp, rainOrSnow);
-        addActivities(suggestions, avgTemp, rainOrSnow);
-
-        mSuggestions = suggestions;
+//        ArrayList<Suggestion> suggestions = new ArrayList<Suggestion>();
+//        ArrayList<String> prefList = Preferences.prefList;
+//
+//        addClothing(suggestions, avgTemp, rainOrSnow);
+//        addActivities(suggestions, avgTemp, rainOrSnow);
+//
+//        mSuggestions = suggestions;
     }
+
+    /**
+     * Call this function to get new weather and suggestions, based on location
+     */
+    public void fetchNewData(final Context context) {
+        // When new data is requested, fetch new location
+        // A new location will trigger new weather data being fetched
+        fetchLocation(context);
+    }
+
 
 
     /* Location Services*/
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
-    private Location lastLocation;
     private final int numSecondsRefresh = 600;
+    private Location lastLocation;
+    public Location getLastLocation() {return lastLocation;}
 
     /**
      * If locations are not being fetched, this begins fetching
      * Location updates are done via the suggestion listener interface
      */
 
-    public void fetchLocation(final Context context) {
+    private void fetchLocation(final Context context) {
         // Either begin fetching locations or notify of last location found
         if (googleApiClient == null) {
             googleApiClient = new GoogleApiClient.Builder(context.getApplicationContext())
@@ -121,9 +137,8 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
                     .build();
             googleApiClient.connect();
         } else if (lastLocation != null) {
-            for (SuggestionListener listener : listeners) {
-                listener.locationChanged(lastLocation);
-            }
+            // Simulate a location change so that new data can be fetched
+            onLocationChanged(lastLocation);
         }
     }
 
@@ -158,9 +173,7 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
     @Override
     public void onLocationChanged(Location location) {
         lastLocation = location;
-        for (SuggestionListener listener : listeners) {
-            listener.locationChanged(location);
-        }
+        fetchWeather();
     }
 
 
@@ -177,29 +190,23 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
 
     /* Begin Weather*/
     private WeatherFetcher weatherFetcher;
+    private WeatherJSON lastWeatherRetrieved;
+    public WeatherJSON getLastWeatherRetrieved(){return lastWeatherRetrieved;}
 
 
     /**
      * Updates WeatherFetcher with current location and then fetches new Weather result
      * Relays update via callback methods from SuggestionsManager
+     * This should not be called if no weather has been fetched
      */
-    public void fetchWeather(final Context context) {
-        // Make sure weatherFetcher exists
+    private void fetchWeather() {
         if (weatherFetcher == null) {
             weatherFetcher = new WeatherFetcher();
             weatherFetcher.listener = this;
         }
-
-        // If no location has been fetched, then break to fetch weather
-        if (lastLocation == null) {
-            fetchLocation(context);
-            return;
-        }
-
         weatherFetcher.latitude = Double.toString(lastLocation.getLatitude());
-        weatherFetcher.longitude = Double.toString(lastLocation.getLatitude());
+        weatherFetcher.longitude = Double.toString(lastLocation.getLongitude());
         weatherFetcher.fetchWeather();
-
     }
 
     @Override
@@ -209,11 +216,10 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
 
     @Override
     public void weatherFetchSucceeded(WeatherJSON response) {
-        for (SuggestionListener listener : listeners) {
-            listener.weatherFetched(response);
-        }
+        // Save last weather retrieved and update suggestions now
+        lastWeatherRetrieved = response;
+        updateSuggestions();
     }
-
     /*End Weather*/
 
 
@@ -471,8 +477,7 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
     }
 
     public interface SuggestionListener {
-        void locationChanged(Location location);
-        void weatherFetched(WeatherJSON weatherObject);
+        void newDataFetched();
     }
 
 }

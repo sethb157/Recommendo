@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
     private SuggestionsManager suggestionsManager;
 
     private TextView cityTextView;
+    private TextView weatherTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,17 +34,32 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
 
         // Get UI handles
         cityTextView = (TextView)findViewById(R.id.city_name_text_view);
+        weatherTextView = ((TextView) findViewById(R.id.weather_desc_text_view));
 
         suggestionsManager = SuggestionsManager.getSharedManager();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         suggestionsManager.addListener(this);
+        fetchNewDataIfPossible();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        suggestionsManager.removeListener(this);
+    }
+
+    private void fetchNewDataIfPossible() {
         if (!suggestionsManager.locationEnabled(this)) {
             requestLocationPermission();
         }
         else {
-            suggestionsManager.fetchLocation(this);
+            suggestionsManager.fetchNewData(this);
         }
     }
-
 
     /*START PERMISSION REQUEST*/
     private void requestLocationPermission() {
@@ -55,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
         switch (requestCode) {
             case REQUEST_LOC_CODE:
                 if (grantResults.length > 1 && grantResults[0] == 0 && grantResults[1] == 0)
-                    suggestionsManager.fetchWeather(this);
+                    suggestionsManager.fetchNewData(this);
                 break;
             default:
                 break;
@@ -65,22 +81,15 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
     /*END PERMISSION REQUEST*/
 
     @Override
-    public void locationChanged(Location location) {
-        Log.d(TAG, "locationChanged: ");
-        updateCityName(location);
-
-        suggestionsManager.fetchWeather(this);
-    }
-
-    @Override
-    public void weatherFetched(WeatherJSON weatherObject) {
-        updateWeatherDescription(weatherObject);
+    public void newDataFetched() {
+        updateWeatherDescription(suggestionsManager.getLastWeatherRetrieved());
+        updateCityName(suggestionsManager.getLastLocation());
     }
 
     private void updateWeatherDescription(WeatherJSON weatherObject) {
         String weatherDesc = weatherObject.getMain().getTemp().intValue()
                 + "\u00B0 - " + weatherObject.getWeather().get(0).getMain();
-        ((TextView) findViewById(R.id.weather_desc_text_view)).setText(weatherDesc, TextView.BufferType.EDITABLE);
+        weatherTextView.setText(weatherDesc, TextView.BufferType.EDITABLE);
     }
 
     private AddressResultReceiver addressResultReceiver;
