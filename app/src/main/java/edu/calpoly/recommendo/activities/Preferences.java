@@ -39,7 +39,7 @@ public class Preferences extends AppCompatActivity {
         preferencesManager = PreferencesManager.getPreferencesManager();
         prefList = preferencesManager.getPrefList(this);
 
-        GridView gridview = (GridView) findViewById(R.id.gridview);
+        final GridView gridview = (GridView) findViewById(R.id.gridview);
         gridview.setAdapter(new ImageAdapter(this));
 
         Button doneButton = (Button) findViewById(R.id.preferences_done);
@@ -50,6 +50,7 @@ public class Preferences extends AppCompatActivity {
                 if (position == 0) {
                     if (prefList.contains(BIKING)) {
                         prefList.remove(BIKING);
+
                     }
                     else {
                         prefList.add(BIKING);
