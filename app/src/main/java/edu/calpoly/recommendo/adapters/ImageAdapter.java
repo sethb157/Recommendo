@@ -1,18 +1,26 @@
 package edu.calpoly.recommendo.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
+
 import edu.calpoly.recommendo.R;
+import edu.calpoly.recommendo.activities.PreferenceItem;
 
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
+    ArrayList<PreferenceItem> icons;
 
     public ImageAdapter(Context c) {
+        setIconObjects(mThumbIds);
         mContext = c;
     }
 
@@ -21,7 +29,7 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public Object getItem(int position) {
-        return null;
+        return icons.get(position);
     }
 
     public long getItemId(int position) {
@@ -34,16 +42,19 @@ public class ImageAdapter extends BaseAdapter {
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
+            imageView.setLayoutParams(new GridView.LayoutParams(155, 155));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setPadding(8, 8, 8, 8);
+            imageView.setPadding(5, 5, 5, 5);
         } else {
             imageView = (ImageView) convertView;
         }
 
-        imageView.setBackgroundColor(0xFFCCCCFF);
 
-        imageView.setImageResource(mThumbIds[position]);
+        PreferenceItem pItem = (PreferenceItem) getItem(position);
+        Drawable drawable = mContext.getResources().getDrawable(pItem.iconID, null);
+        DrawableCompat.setTint(drawable, pItem.checked? Color.RED: Color.BLACK);
+        imageView.setImageDrawable(drawable);
+
         return imageView;
     }
 
@@ -54,4 +65,14 @@ public class ImageAdapter extends BaseAdapter {
             R.drawable.movies, R.drawable.pizza,
             R.drawable.hiking, R.drawable.golf
     };
+
+    private ArrayList<PreferenceItem> setIconObjects(Integer[] ids) {
+        icons = new ArrayList<PreferenceItem>();
+
+        for (Integer id : ids) {
+            icons.add(new PreferenceItem(id, false));
+        }
+
+        return icons;
+    }
 }

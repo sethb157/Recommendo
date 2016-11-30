@@ -46,7 +46,7 @@ public class Preferences extends AppCompatActivity {
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                //Toast.makeText(Preferences.this, "The position is " + position, Toast.LENGTH_SHORT).show();
+
                 if (position == 0) {
                     if (prefList.contains(BIKING)) {
                         prefList.remove(BIKING);
@@ -145,9 +145,9 @@ public class Preferences extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        for (int i = 0; i < prefList.size(); i++) {
+        /*for (int i = 0; i < prefList.size(); i++) {
             Log.d("LOGGING!!!", "Position " + i + ": " + prefList.get(i));
-        }
+        }*/
 
         // Save preferences here
         preferencesManager.savePrefList(this);
