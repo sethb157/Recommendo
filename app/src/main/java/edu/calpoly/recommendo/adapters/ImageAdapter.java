@@ -3,6 +3,7 @@ package edu.calpoly.recommendo.adapters;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.view.KeyEvent;
@@ -56,25 +57,16 @@ public class ImageAdapter extends BaseAdapter {
 
         final PreferenceItem pItem = (PreferenceItem) getItem(position);
 
-        /*imageView.setOnTouchListener(new View.OnTouchListener() {
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (MotionEventCompat.getActionMasked(motionEvent)) {
-                    case MotionEvent.ACTION_DOWN:
-                        if (pItem.checked == false)
-                            pItem.checked = true;
-                        else
-                            pItem.checked = false;
-                        break;
-                }
-
-                return false;
+            public void onClick(View view) {
+                pItem.checked = !pItem.checked;
+                notifyDataSetChanged();
             }
         });
-        */
 
         Drawable drawable = mContext.getResources().getDrawable(pItem.iconID, null);
-        DrawableCompat.setTint(drawable, pItem.checked? Color.RED: Color.BLACK);
+        DrawableCompat.setTint(drawable, pItem.checked? ResourcesCompat.getColor(mContext.getResources(), R.color.Salmon, null): Color.BLACK);
         imageView.setImageDrawable(drawable);
 
         return imageView;

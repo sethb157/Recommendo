@@ -9,8 +9,9 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingTop="15dp"
-        android:paddingBottom="30dp"
+        android:paddingBottom="15dp"
         android:textSize="45dp"
+        android:textColor="@color/niceTeal"
         android:text="@string/PreferencesTitle">
     </TextView>
 
@@ -28,7 +29,10 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="66dp"
+        android:gravity="center"
         android:id="@+id/preferences_done"
+        android:textColor="@color/DarkCyan"
+        android:background="@color/white"
         android:text="@string/done">
     </Button>
 
