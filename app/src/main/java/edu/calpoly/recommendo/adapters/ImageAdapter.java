@@ -73,11 +73,11 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     private Integer[] mThumbIds = {
-            R.drawable.biking, R.drawable.coffee,
-            R.drawable.fitness, R.drawable.running,
-            R.drawable.restaurant, R.drawable.swimming,
-            R.drawable.movies, R.drawable.pizza,
-            R.drawable.hiking, R.drawable.golf
+            R.drawable.coffee, R.drawable.fitness,
+            R.drawable.restaurant,R.drawable.movies,
+            R.drawable.hiking, R.drawable.bowling,
+            R.drawable.reading, R.drawable.nightclub,
+            R.drawable.shopping
     };
 
     private ArrayList<PreferenceItem> setIconObjects(Integer[] ids) {
