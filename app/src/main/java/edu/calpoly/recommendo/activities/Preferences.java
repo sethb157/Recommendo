@@ -18,16 +18,15 @@ import edu.calpoly.recommendo.managers.PreferencesManager;
 public class Preferences extends AppCompatActivity {
 
     public static ArrayList<String> prefList;
-    public static final String BIKING = "biking";
     public static final String COFFEE = "coffee";
     public static final String FITNESS = "fitness";
-    public static final String RUNNING = "running";
     public static final String RESTAURANT = "restaurant";
-    public static final String SWIMMING = "swimming";
     public static final String MOVIES = "movies";
-    public static final String PIZZA = "pizza";
     public static final String HIKING = "hiking";
-    public static final String GOLF = "golf";
+    public static final String BOWLING = "bowling";
+    public static final String READING = "reading";
+    public static final String NIGHTCLUB = "nightclub";
+    public static final String SHOPPING = "shopping";
 
     private PreferencesManager preferencesManager;
 
@@ -48,15 +47,6 @@ public class Preferences extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 
                 if (position == 0) {
-                    if (prefList.contains(BIKING)) {
-                        prefList.remove(BIKING);
-
-                    }
-                    else {
-                        prefList.add(BIKING);
-                    }
-                }
-                else if (position == 1) {
                     if (prefList.contains(COFFEE)) {
                         prefList.remove(COFFEE);
                     }
@@ -64,7 +54,7 @@ public class Preferences extends AppCompatActivity {
                         prefList.add(COFFEE);
                     }
                 }
-                else if (position == 2) {
+                else if (position == 1) {
                     if (prefList.contains(FITNESS)) {
                         prefList.remove(FITNESS);
                     }
@@ -72,15 +62,7 @@ public class Preferences extends AppCompatActivity {
                         prefList.add(FITNESS);
                     }
                 }
-                else if (position == 3) {
-                    if (prefList.contains(RUNNING)) {
-                        prefList.remove(RUNNING);
-                    }
-                    else {
-                        prefList.add(RUNNING);
-                    }
-                }
-                else if (position == 4) {
+                else if (position == 2) {
                     if (prefList.contains(RESTAURANT)) {
                         prefList.remove(RESTAURANT);
                     }
@@ -88,15 +70,7 @@ public class Preferences extends AppCompatActivity {
                         prefList.add(RESTAURANT);
                     }
                 }
-                else if (position == 5) {
-                    if (prefList.contains(SWIMMING)) {
-                        prefList.remove(SWIMMING);
-                    }
-                    else {
-                        prefList.add(SWIMMING);
-                    }
-                }
-                else if (position == 6) {
+                else if (position == 3) {
                     if (prefList.contains(MOVIES)) {
                         prefList.remove(MOVIES);
                     }
@@ -104,15 +78,7 @@ public class Preferences extends AppCompatActivity {
                         prefList.add(MOVIES);
                     }
                 }
-                else if (position == 7) {
-                    if (prefList.contains(PIZZA)) {
-                        prefList.remove(PIZZA);
-                    }
-                    else {
-                        prefList.add(PIZZA);
-                    }
-                }
-                else if (position == 8) {
+                else if (position == 4) {
                     if (prefList.contains(HIKING)) {
                         prefList.remove(HIKING);
                     }
@@ -120,12 +86,36 @@ public class Preferences extends AppCompatActivity {
                         prefList.add(HIKING);
                     }
                 }
-                else if (position == 9) {
-                    if (prefList.contains(GOLF)) {
-                        prefList.remove(GOLF);
+                else if (position == 5) {
+                    if (prefList.contains(BOWLING)) {
+                        prefList.remove(BOWLING);
                     }
                     else {
-                        prefList.add(GOLF);
+                        prefList.add(BOWLING);
+                    }
+                }
+                else if (position == 6) {
+                    if (prefList.contains(READING)) {
+                        prefList.remove(READING);
+                    }
+                    else {
+                        prefList.add(READING);
+                    }
+                }
+                else if (position == 7) {
+                    if (prefList.contains(NIGHTCLUB)) {
+                        prefList.remove(NIGHTCLUB);
+                    }
+                    else {
+                        prefList.add(NIGHTCLUB);
+                    }
+                }
+                else if (position == 8) {
+                    if (prefList.contains(SHOPPING)) {
+                        prefList.remove(SHOPPING);
+                    }
+                    else {
+                        prefList.add(SHOPPING);
                     }
                 }
             }
