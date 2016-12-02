@@ -6,6 +6,8 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -19,11 +21,14 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.bumptech.glide.load.resource.drawable.DrawableResource;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -127,34 +132,36 @@ public class MapActivity extends Activity
             }
         }
 
-        SuggestionsManager suggestionsManager = SuggestionsManager.getSharedManager();
-
-        //suggestionsManager.fetchNewData(this);
-        mSuggestions = suggestionsManager.getSuggestions();
+        mSuggestions = SuggestionsManager.getSuggestions();
         for (Suggestion item : mSuggestions) {
             if (item.getType() != null && item.getType().equals(SuggestionsManager.TYPE_ACTIVITY)) {
-                mMap.addMarker(new MarkerOptions()
+                MarkerOptions marker = new MarkerOptions()
                         .position(new LatLng(item.getLatitude(), item.getLongitude()))
-                .title(item.getName()));
+                        .title(item.getName());
+                mMap.addMarker(marker);
             }
         }
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                String title = marker.getTitle();
+                int key = 0;
+                for (Suggestion item : mSuggestions) {
+                    if (item.getName() != null && item.getName().equals(title)) {
+                        Intent myIntent = new Intent(getApplicationContext(), DetailSuggestionActivity.class);
+                        myIntent.putExtra("key", key); //Optional parameters
+                        startActivity(myIntent);
+                        break;
+                    }
+                    key++;
+                }
+            }
+        });
 
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-
-        String title = marker.getTitle();
-        int key = 0;
-        for (Suggestion item : mSuggestions) {
-            if (item.getName() != null && item.getName().equals(title)) {
-                Intent myIntent = new Intent(getApplicationContext(), DetailSuggestionActivity.class);
-                myIntent.putExtra("key", key); //Optional parameters
-                startActivity(myIntent);
-                break;
-            }
-            key++;
-        }
 
         return false;
     }
@@ -167,12 +174,11 @@ public class MapActivity extends Activity
         if (mMap != null) {
             mMap.animateCamera(cameraUpdate);
         }
-
         //mLocationManager.removeUpdates(this);
 
     }
 
-    @Override
+   @Override
     public void onStatusChanged(String s, int i, Bundle bundle) {
 
     }
