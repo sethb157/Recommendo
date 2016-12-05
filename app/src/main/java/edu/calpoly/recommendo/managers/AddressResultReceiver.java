@@ -1,4 +1,4 @@
-package edu.calpoly.recommendo;
+package edu.calpoly.recommendo.managers;
 
 import android.os.Bundle;
 import android.os.Handler;

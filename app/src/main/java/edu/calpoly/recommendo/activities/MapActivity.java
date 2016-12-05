@@ -12,13 +12,10 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.bumptech.glide.load.resource.drawable.DrawableResource;
@@ -36,10 +33,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 
 import edu.calpoly.recommendo.R;
-import edu.calpoly.recommendo.suggestions.Suggestion;
-import edu.calpoly.recommendo.suggestions.SuggestionsManager;
-
-import static com.google.android.gms.plus.PlusOneDummyView.TAG;
+import edu.calpoly.recommendo.managers.suggestions.Suggestion;
+import edu.calpoly.recommendo.managers.suggestions.SuggestionsManager;
 
 /**
  * Created by Dan on 11/27/2016.

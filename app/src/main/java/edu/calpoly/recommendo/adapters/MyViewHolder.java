@@ -2,21 +2,12 @@ package edu.calpoly.recommendo.adapters;
 
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 
 import edu.calpoly.recommendo.R;
 import edu.calpoly.recommendo.activities.DetailSuggestionActivity;
-import edu.calpoly.recommendo.suggestions.Suggestion;
+import edu.calpoly.recommendo.managers.suggestions.Suggestion;
 
 public class MyViewHolder extends RecyclerView.ViewHolder {
 

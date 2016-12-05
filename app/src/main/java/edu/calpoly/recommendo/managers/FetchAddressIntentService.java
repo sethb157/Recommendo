@@ -1,4 +1,4 @@
-package edu.calpoly.recommendo;
+package edu.calpoly.recommendo.managers;
 
 import android.app.IntentService;
 import android.content.Intent;

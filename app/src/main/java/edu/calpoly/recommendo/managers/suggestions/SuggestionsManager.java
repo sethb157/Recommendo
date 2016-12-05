@@ -1,4 +1,4 @@
-package edu.calpoly.recommendo.suggestions;
+package edu.calpoly.recommendo.managers.suggestions;
 
 import android.Manifest;
 import android.content.Context;
@@ -16,7 +16,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.Place;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +62,7 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
 
     private static ArrayList<Suggestion> mSuggestions;
     public static ArrayList<Suggestion> getSuggestions() {
-        return mSuggestions != null ? mSuggestions : new ArrayList<Suggestion>();
+        return mSuggestions;
     }
 
     private ArrayList<SuggestionListener> listeners = new ArrayList<>();
@@ -114,7 +113,7 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
             PlacesResult placesResult = fetchResults.get(searchTerm);
             for (Result result : placesResult.getResults()) {
 
-                // First get photo ref
+                // Get first photo ref
                 String photoRef = "";
                 List<Photo> photos = result.getPhotos();
                 if (!photos.isEmpty()) {
@@ -135,8 +134,6 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
         }
     }
 
-//    addClothing(suggestions, avgTemp, rainOrSnow);
-//        addActivities(suggestions, avgTemp, rainOrSnow);
     /**
      * Call this function to get new weather and suggestions, based on location
      */
@@ -205,8 +202,11 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
 
     @Override
     public void onLocationChanged(Location location) {
-        lastLocation = location;
-        fetchWeather();
+        // Only update data if serious location change
+        if (lastLocation == null || (lastLocation != null && location.distanceTo(lastLocation) >= 500)) {
+            lastLocation = location;
+            fetchWeather();
+        }
     }
 
 
@@ -270,10 +270,6 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
                 searchTerms.add("cafe");
             }
 
-            if (prefList.contains(Preferences.PIZZA)) {
-                searchTerms.add("meal_delivery");
-                searchTerms.add("meal_takeaway");
-            }
         }
         else if (avgTemp <= 55) {
             if (prefList.contains(Preferences.COFFEE)) {
@@ -292,10 +288,6 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
                     searchTerms.add("restaurant");
                 }
             }
-            if (prefList.contains(Preferences.PIZZA)) {
-                searchTerms.add("meal_delivery");
-                searchTerms.add("meal_takeaway");
-            }
         }
         else if (avgTemp <= 70) {
             if (prefList.contains(Preferences.COFFEE)) {
@@ -310,17 +302,11 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
                 searchTerms.add("movie_theater");
             }
             if (!rainOrSnow) {
-                if (prefList.contains(Preferences.RUNNING)) {
-                    searchTerms.add("park");
-                }
                 if (prefList.contains(Preferences.RESTAURANT)) {
                     searchTerms.add("restaurant");
                 }
             }
-            if (prefList.contains(Preferences.PIZZA)) {
-                searchTerms.add("meal_delivery");
-                searchTerms.add("meal_takeaway");
-            }
+
         }
         else if (avgTemp <= 85) {
 
@@ -328,9 +314,7 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
                 //TODO: Add search terms to placesAPI
 
             }
-            if (prefList.contains(Preferences.RUNNING)) {
-                searchTerms.add("park");
-            }
+
 //            if (!rainOrSnow) {
 //                if (prefList.contains(Preferences.BIKING)) {
 //                    // park
@@ -357,10 +341,7 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
                 searchTerms.add("movie_theater");
 
             }
-            if (prefList.contains(Preferences.PIZZA)) {
-                searchTerms.add("meal_delivery");
-                searchTerms.add("meal_takeaway");
-            }
+
 
         }
         else {

@@ -8,29 +8,21 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.view.View;
-import android.widget.Adapter;
-import android.widget.AdapterView;
 
 
-import java.util.ArrayList;
-
-import edu.calpoly.recommendo.AddressResultReceiver;
-import edu.calpoly.recommendo.FetchAddressIntentService;
+import edu.calpoly.recommendo.managers.AddressResultReceiver;
+import edu.calpoly.recommendo.managers.FetchAddressIntentService;
 import edu.calpoly.recommendo.R;
 import edu.calpoly.recommendo.adapters.MyAdapter;
 import edu.calpoly.recommendo.managers.PreferencesManager;
 import edu.calpoly.recommendo.managers.weather.scheme.WeatherJSON;
-import edu.calpoly.recommendo.suggestions.Suggestion;
-import edu.calpoly.recommendo.suggestions.SuggestionsManager;
+import edu.calpoly.recommendo.managers.suggestions.SuggestionsManager;
 
 public class MainActivity extends AppCompatActivity implements SuggestionsManager.SuggestionListener, AddressResultReceiver.Receiver{
 
@@ -87,25 +79,28 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
         weatherTextView = ((TextView) findViewById(R.id.weather_desc_text_view));
         weatherImageView = (ImageView) findViewById(R.id.weather_image_view);
 
-        suggestionsManager = SuggestionsManager.getSharedManager();
-
-        fetchNewDataIfPossible();
-
         rv = (RecyclerView) findViewById(R.id.rv);
         assert rv != null;
         rv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         adapter = new MyAdapter();
         rv.setAdapter(adapter);
-        //String x = mSuggestions.get(0).getName();
+
+        suggestionsManager = SuggestionsManager.getSharedManager();
+
+        // If suggestions already exist, trigger their retrieval manually
+        if (suggestionsManager.getSuggestions() != null) {
+            this.newDataFetched();
+        }
 
     }
-
 
     @Override
     protected void onResume() {
         super.onResume();
         suggestionsManager.addListener(this);
-        fetchNewDataIfPossible();
+        if (suggestionsManager.getSuggestions() == null) {
+            suggestionsManager.fetchNewData(this);
+        }
     }
 
     @Override
@@ -114,14 +109,6 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
         suggestionsManager.removeListener(this);
     }
 
-    private void fetchNewDataIfPossible() {
-        if (!suggestionsManager.locationEnabled(this)) {
-            requestLocationPermission();
-        }
-        else {
-            suggestionsManager.fetchNewData(this);
-        }
-    }
 
     /*START PERMISSION REQUEST*/
     private void requestLocationPermission() {
