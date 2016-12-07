@@ -99,7 +99,11 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
         super.onResume();
         suggestionsManager.addListener(this);
         if (suggestionsManager.getSuggestions() == null) {
-            suggestionsManager.fetchNewData(this);
+            if (suggestionsManager.locationEnabled(this)) {
+                suggestionsManager.fetchNewData(this);
+            } else {
+                requestLocationPermission();
+            }
         }
     }
 
