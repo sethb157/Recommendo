@@ -9,4 +9,8 @@
         <item name="android:windowBackground">@color/LightCyan</item>
     </style>
 
+    <style name="NoActionBarTheme" parent="Theme.AppCompat.NoActionBar">
+
+    </style>
+
 </resources>

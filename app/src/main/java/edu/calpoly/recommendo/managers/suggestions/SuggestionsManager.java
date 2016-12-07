@@ -20,6 +20,7 @@ import com.google.android.gms.location.LocationServices;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.calpoly.recommendo.R;
 import edu.calpoly.recommendo.activities.Preferences;
 import edu.calpoly.recommendo.managers.PreferencesManager;
 import edu.calpoly.recommendo.managers.places.PlacesFetcher;
@@ -57,9 +58,33 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
     public static String BOTTOM_SHORTS = "Shorts";
     public static String BOTTOM_SNOWPANTS = "Snow Pants";
 
+    // Define mapping for icons inline
+    private static ArrayMap<String, Integer> nameImageMapping;
+    public static Integer getResourceIDForName(String name){return nameImageMapping.get(name);}
+    static {
+        ArrayMap<String, Integer> map = new ArrayMap<>();
+        map.put(TOP_SWEATSHIRT, R.drawable.sweatshirt);
+        map.put(TOP_TSHIRT, R.drawable.shirt);
+        map.put(BOTTOM_PANTS, R.drawable.pants);
+        nameImageMapping = map;
+    }
+
     private PreferencesManager preferencesManager;
     private Context preferencesContext;
 
+    // Suggestions without clothing, separated by category
+    private ArrayList<ArrayList<Suggestion>> suggestionsByCategory;
+    public ArrayList<ArrayList<Suggestion>> getSuggestionsByCategory() {return suggestionsByCategory;}
+
+    // This array corresponds directly to the one above
+    private ArrayList<String> keysInOrder;
+    public ArrayList<String> getKeysInOrder() {return keysInOrder;}
+
+    // ArrayList of JUST clothing suggestions
+    private ArrayList<Suggestion> clothingSuggestions;
+    public ArrayList<Suggestion> getClothingSuggestions() {return clothingSuggestions;}
+
+    // All suggestions mixed together, including clothing
     private static ArrayList<Suggestion> mSuggestions;
     public static ArrayList<Suggestion> getSuggestions() {
         return mSuggestions;
@@ -103,14 +128,25 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
 
     @Override
     public void placesFetchFinished(PlacesFetcher fetcher, ArrayMap<String, PlacesResult> fetchResults) {
+        // Build out suggestions list will all suggestions grouped together
+        // And one that keeps them organized by category
         ArrayList<Suggestion> suggestions = new ArrayList<>();
+        ArrayList<ArrayList<Suggestion>> categories = new ArrayList<>();
+        ArrayList<String> keys = new ArrayList<>();
 
-        // Add clothing suggestions first
-        addClothing(suggestions, lastWeatherRetrieved.getMain().getTemp(), false);
+        // Retrieve and add clothing suggestions
+        ArrayList<Suggestion> newClothingSuggestions = retrieveClothingSuggestions(lastWeatherRetrieved.getMain().getTemp(), false);
+        this.clothingSuggestions = newClothingSuggestions;
+        suggestions.addAll(clothingSuggestions);
 
         // Parse through fetch results and generate new suggestions
         for (String searchTerm : fetchResults.keySet()) {
             PlacesResult placesResult = fetchResults.get(searchTerm);
+            if (placesResult.getResults().isEmpty()) continue;
+
+            keys.add(searchTerm);
+
+            ArrayList<Suggestion> newCategory = new ArrayList<>();
             for (Result result : placesResult.getResults()) {
 
                 // Get first photo ref
@@ -124,11 +160,16 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
                         = new Suggestion(result.getName(), result.getVicinity(), null, TYPE_ACTIVITY, searchTerm, photoRef,
                         result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng());
                 suggestions.add(newSuggestion);
+                newCategory.add(newSuggestion);
             }
+            //Add category of suggestions to list
+            categories.add(newCategory);
         }
 
         // Set new suggestions and alert all listeners of change
         mSuggestions = suggestions;
+        suggestionsByCategory = categories;
+        keysInOrder = keys;
         for (SuggestionListener listener : listeners) {
             listener.newDataFetched();
         }
@@ -386,7 +427,8 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
         return searchTerms;
     }
 
-    private static void addClothing(ArrayList<Suggestion> suggestions, double avgTemp, boolean rainOrSnow) {
+    private ArrayList<Suggestion> retrieveClothingSuggestions(double avgTemp, boolean rainOrSnow) {
+        ArrayList<Suggestion> suggestions = new ArrayList<>();
         if (avgTemp <= 30) {
             suggestions.add(new Suggestion(HEADWEAR_BEANIE, null, null, TYPE_CLOTHES, HEADWEAR));
             suggestions.add(new Suggestion(TOP_SNOWJACKET, null, null, TYPE_CLOTHES, TOP));
@@ -438,7 +480,7 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
                 suggestions.add(new Suggestion(BOTTOM_SHORTS, null, null, TYPE_CLOTHES, BOTTOM));
             }
         }
-
+        return suggestions;
     }
 
     public interface SuggestionListener {

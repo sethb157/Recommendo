@@ -19,14 +19,14 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 
-import java.util.ArrayList;
+import com.bumptech.glide.Glide;
 
+import edu.calpoly.recommendo.adapters.ClothingAdapter;
+import edu.calpoly.recommendo.adapters.SuggestionsFirstLevelAdapter;
 import edu.calpoly.recommendo.managers.AddressResultReceiver;
 import edu.calpoly.recommendo.managers.FetchAddressIntentService;
 import edu.calpoly.recommendo.R;
-import edu.calpoly.recommendo.adapters.MyAdapter;
 import edu.calpoly.recommendo.managers.PreferencesManager;
-import edu.calpoly.recommendo.managers.suggestions.Suggestion;
 import edu.calpoly.recommendo.managers.weather.scheme.WeatherJSON;
 import edu.calpoly.recommendo.managers.suggestions.SuggestionsManager;
 
@@ -36,16 +36,19 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
     private final int REQUEST_LOC_CODE = 242;
     private SuggestionsManager suggestionsManager;
 
-    private TextView cityTextView;
-    private TextView weatherTextView;
+
     private ImageView weatherImageView;
     private FrameLayout progressBarHolder;
 
     private AlphaAnimation inAnimation;
     private AlphaAnimation outAnimation;
+    private TextView temperatureTextView;
 
     private RecyclerView rv;
-    private static MyAdapter adapter;
+    private SuggestionsFirstLevelAdapter adapter;
+
+    private RecyclerView clothingRecyclerView;
+    private ClothingAdapter clothingAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,24 +63,7 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
             startActivity(intent);
         }
 
-        // Get UI handles
-        cityTextView = (TextView)findViewById(R.id.city_name_text_view);
-        weatherTextView = ((TextView) findViewById(R.id.weather_desc_text_view));
-        weatherImageView = (ImageView) findViewById(R.id.weather_image_view);
         progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
-
-        rv = (RecyclerView) findViewById(R.id.rv);
-        assert rv != null;
-        rv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        adapter = new MyAdapter();
-        rv.setAdapter(adapter);
-
-        suggestionsManager = SuggestionsManager.getSharedManager();
-
-        // If suggestions already exist, trigger their retrieval manually
-        if (suggestionsManager.getSuggestions() != null) {
-            this.newDataFetched();
-        }
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation);
@@ -109,6 +95,30 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
                 }
         );
 
+        // Get UI handles
+        weatherImageView = (ImageView) findViewById(R.id.weather_image_view);
+        temperatureTextView = (TextView) findViewById(R.id.temperature_text_view);
+
+        // Clothing recyclerview
+        clothingRecyclerView = (RecyclerView) findViewById(R.id.clothing_recycler_view);
+        clothingRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        clothingAdapter = new ClothingAdapter();
+        clothingRecyclerView.setAdapter(clothingAdapter
+        );
+
+        // Regular recyclerview
+        rv = (RecyclerView) findViewById(R.id.rv);
+        assert rv != null;
+        rv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        adapter = new SuggestionsFirstLevelAdapter();
+        rv.setAdapter(adapter);
+
+        suggestionsManager = SuggestionsManager.getSharedManager();
+
+        // If suggestions already exist, trigger their retrieval manually
+        if (suggestionsManager.getSuggestions() != null) {
+            this.newDataFetched();
+        }
     }
 
     @Override
@@ -157,17 +167,20 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
         inAnimation.setDuration(200);
         progressBarHolder.setAnimation(inAnimation);
         progressBarHolder.setVisibility(View.VISIBLE);
-        updateWeatherDescription(suggestionsManager.getLastWeatherRetrieved());
-        updateCityName(suggestionsManager.getLastLocation());
+
+        updateWeatherText(suggestionsManager.getLastWeatherRetrieved());
         updateWeatherIcon(suggestionsManager.getLastWeatherRetrieved().getWeather().get(0).getIcon());
 
-        adapter.mSuggestions = suggestionsManager.getSuggestions();
+        adapter.setSuggestionLists(suggestionsManager.getSuggestionsByCategory());
+        adapter.setKeysInOrder(suggestionsManager.getKeysInOrder());
         adapter.notifyDataSetChanged();
 
         outAnimation = new AlphaAnimation(1f, 0f);
         outAnimation.setDuration(200);
         progressBarHolder.setAnimation(outAnimation);
         progressBarHolder.setVisibility(View.GONE);
+        clothingAdapter.setSuggestions(suggestionsManager.getClothingSuggestions());
+        clothingAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -184,32 +197,39 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
      * @param iconID uses iconID to select icon)
      */
     private void updateWeatherIcon(String iconID) {
+
+        Integer imageResource;
         // Cloudy
         if (iconID.startsWith("02") || iconID.startsWith("03") || iconID.startsWith("04") || iconID.startsWith("50")) {
-            weatherImageView.setImageResource(R.drawable.ic_cloud_queue_white_24dp);
+            imageResource = R.drawable.ic_cloud_queue_white_24dp;
         }
         // Rainy
         else if (iconID.startsWith("09") || iconID.startsWith("10") || iconID.startsWith("11")) {
-            weatherImageView.setImageResource(R.drawable.rain);
+            imageResource = R.drawable.rain;
         }
         // Sunny
         else {
             // Day or night
             if (iconID.contains("d")) {
-                weatherImageView.setImageResource(R.drawable.ic_wb_sunny_white_48dp);
+                imageResource = R.drawable.ic_wb_sunny_white_48dp;
             }
             else {
-                weatherImageView.setImageResource(R.drawable.moon);
+                imageResource = R.drawable.moon;
             }
         }
-
+        Glide.with(this).load(imageResource).into(weatherImageView);
     }
 
-    private void updateWeatherDescription(WeatherJSON weatherObject) {
-        String weatherDesc = weatherObject.getMain().getTemp().intValue()
-                + "\u00B0 - " + weatherObject.getWeather().get(0).getDescription();
-        weatherTextView.setText(weatherDesc, TextView.BufferType.EDITABLE);
+    private void updateWeatherText(WeatherJSON weatherObject) {
+        String temperature = "" + weatherObject.getMain().getTemp().intValue() + "\u00B0";
+        temperatureTextView.setText(temperature);
     }
+
+//    private void updateWeatherDescription(WeatherJSON weatherObject) {
+//        String weatherDesc = weatherObject.getMain().getTemp().intValue()
+//                + "\u00B0 - " + weatherObject.getWeather().get(0).getDescription();
+//        weatherTextView.setText(weatherDesc, TextView.BufferType.EDITABLE);
+//    }
 
     private AddressResultReceiver addressResultReceiver;
 
@@ -217,19 +237,19 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
      * Starts a service to get city name
      * @param location
      */
-    private void updateCityName(Location location) {
-        Log.d(TAG, "cityNameForLocation: Started");
-        addressResultReceiver = new AddressResultReceiver(new Handler());
-        addressResultReceiver.setReceiver(this);
-
-        Intent intent = new Intent(Intent.ACTION_SYNC, null, this, FetchAddressIntentService.class);
-
-        intent.putExtra(FetchAddressIntentService.Constants.LOCATION_DATA_EXTRA, location);
-        intent.putExtra(FetchAddressIntentService.Constants.RECEIVER, addressResultReceiver);
-
-        startService(intent);
-    }
-
+//    private void updateCityName(Location location) {
+//        Log.d(TAG, "cityNameForLocation: Started");
+//        addressResultReceiver = new AddressResultReceiver(new Handler());
+//        addressResultReceiver.setReceiver(this);
+//
+//        Intent intent = new Intent(Intent.ACTION_SYNC, null, this, FetchAddressIntentService.class);
+//
+//        intent.putExtra(FetchAddressIntentService.Constants.LOCATION_DATA_EXTRA, location);
+//        intent.putExtra(FetchAddressIntentService.Constants.RECEIVER, addressResultReceiver);
+//
+//        startService(intent);
+//    }
+//
     /**
      * This is specifically for address results
      */
@@ -238,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
         // Update UI if city fetch was successful
         if (resultCode == FetchAddressIntentService.Constants.SUCCESS_RESULT) {
             String cityResult = resultData.getString(FetchAddressIntentService.Constants.RESULT_DATA_KEY, "");
-            if (!cityResult.isEmpty()) cityTextView.setText(cityResult, TextView.BufferType.EDITABLE);
+//            if (!cityResult.isEmpty()) cityTextView.setText(cityResult, TextView.BufferType.EDITABLE);
         }
     }
 

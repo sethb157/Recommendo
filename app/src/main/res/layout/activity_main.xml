@@ -6,63 +6,87 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/WhiteSmoke"
     tools:context="edu.calpoly.recommendo.activities.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:background="@color/niceTeal"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/weather_image_view"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_margin="25dp"
-
-                android:src="@drawable/ic_wb_sunny_white_48dp" />
-
+            android:background="@color/WhiteSmoke"
+            android:orientation="horizontal"
+            android:elevation="5dp">
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="80dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/city_name_text_view"
-                    android:layout_width="match_parent"
+                android:background="@color/Teal"
+                android:elevation="10dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clipToPadding="false">
+                <ImageView
+                    android:id="@+id/weather_image_view"
+                    android:layout_width="40dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:breakStrategy="simple"
-                    android:ellipsize="middle"
-                    android:maxLines="1"
-                    android:text="City Unknown"
-                    android:textColor="@color/panelTextColor"
-                    android:textSize="30sp"
-                    android:textStyle="bold" />
 
+                    android:src="@drawable/ic_wb_sunny_white_48dp" />
                 <TextView
-                    android:id="@+id/weather_desc_text_view"
-                    android:layout_width="match_parent"
+                    android:id="@+id/temperature_text_view"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Weather Unknown"
-                    android:textColor="@color/panelTextColor"
+                    android:text="\?"
                     android:textSize="25sp"
-                    android:textStyle="italic" />
+                    />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SUGGESTIONS"
+                    android:textSize="40sp"
+                    android:textStyle="normal"
+                    android:textColor="@color/Teal"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="for today"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/Teal"/>
+
+            </LinearLayout>
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/white"
+            android:gravity="center">
+           <android.support.v7.widget.RecyclerView
+               android:id="@+id/clothing_recycler_view"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               >
+
+           </android.support.v7.widget.RecyclerView>
+        </LinearLayout>
+
 
         <android.support.v7.widget.RecyclerView
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/rv">
+            android:id="@+id/rv"
+            >
         </android.support.v7.widget.RecyclerView>
 
         <FrameLayout
