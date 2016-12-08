@@ -28,16 +28,18 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight=".2"
                 android:layout_height="wrap_content"
                 android:id="@+id/address_icon"/>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight=".8"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
                 android:textSize="20dp"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:id="@+id/address"/>
         </LinearLayout>
 
@@ -48,16 +50,18 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight=".2"
                 android:layout_height="wrap_content"
                 android:id="@+id/type_icon"/>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight=".8"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
                 android:textSize="20dp"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:id="@+id/type"/>
         </LinearLayout>
 
@@ -67,16 +71,18 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight=".2"
                 android:layout_height="wrap_content"
                 android:id="@+id/category_icon"/>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight=".8"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
                 android:textSize="20dp"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:id="@+id/category"/>
         </LinearLayout>
 
