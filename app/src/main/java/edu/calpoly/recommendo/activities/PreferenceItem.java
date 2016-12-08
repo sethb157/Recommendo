@@ -6,10 +6,12 @@ package edu.calpoly.recommendo.activities;
 
 public class PreferenceItem {
     public final int iconID;
+    public final String activityDescription;
     public boolean checked;
 
-    public PreferenceItem(int icondID, boolean checked) {
-        this.iconID = icondID;
+    public PreferenceItem(int iconID, String activityDescription, boolean checked) {
+        this.iconID = iconID;
+        this.activityDescription = activityDescription;
         this.checked = checked;
     }
 }

@@ -19,22 +19,23 @@ import java.util.ArrayList;
 import edu.calpoly.recommendo.R;
 import edu.calpoly.recommendo.activities.PreferenceItem;
 import edu.calpoly.recommendo.activities.Preferences;
+import edu.calpoly.recommendo.managers.PreferencesManager;
 
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
-    ArrayList<PreferenceItem> icons;
+    private ArrayList<PreferenceItem> preferenceItems;
 
-    public ImageAdapter(Context c) {
-        setIconObjects(mThumbIds);
+    public ImageAdapter(Context c, ArrayList<PreferenceItem> preferenceItems) {
+        this.preferenceItems = preferenceItems;
         mContext = c;
     }
 
     public int getCount() {
-        return mThumbIds.length;
+        return preferenceItems.size();
     }
 
     public Object getItem(int position) {
-        return icons.get(position);
+        return preferenceItems.get(position);
     }
 
     public long getItemId(int position) {
@@ -57,14 +58,6 @@ public class ImageAdapter extends BaseAdapter {
 
         final PreferenceItem pItem = (PreferenceItem) getItem(position);
 
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                pItem.checked = !pItem.checked;
-                notifyDataSetChanged();
-            }
-        });
-
         Drawable drawable = mContext.getResources().getDrawable(pItem.iconID, null);
         DrawableCompat.setTint(drawable, pItem.checked? ResourcesCompat.getColor(mContext.getResources(), R.color.Salmon, null): Color.BLACK);
         imageView.setImageDrawable(drawable);
@@ -72,21 +65,4 @@ public class ImageAdapter extends BaseAdapter {
         return imageView;
     }
 
-    private Integer[] mThumbIds = {
-            R.drawable.coffee, R.drawable.fitness,
-            R.drawable.restaurant,R.drawable.movies,
-            R.drawable.hiking, R.drawable.bowling,
-            R.drawable.reading, R.drawable.nightclub,
-            R.drawable.shopping
-    };
-
-    private ArrayList<PreferenceItem> setIconObjects(Integer[] ids) {
-        icons = new ArrayList<PreferenceItem>();
-
-        for (Integer id : ids) {
-            icons.add(new PreferenceItem(id, false));
-        }
-
-        return icons;
-    }
 }

@@ -17,7 +17,7 @@ import edu.calpoly.recommendo.managers.PreferencesManager;
 
 public class Preferences extends AppCompatActivity {
 
-    public static ArrayList<String> prefList;
+    private static final String TAG = "Preferences";
     public static final String COFFEE = "coffee";
     public static final String FITNESS = "fitness";
     public static final String RESTAURANT = "restaurant";
@@ -29,95 +29,41 @@ public class Preferences extends AppCompatActivity {
     public static final String SHOPPING = "shopping";
 
     private PreferencesManager preferencesManager;
+    private ArrayList<PreferenceItem> preferenceItems;
+    private ArrayList<String> savedPrefList;
+    private ImageAdapter adapter;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
 
+        // Get preference items to set on adapter
         preferencesManager = PreferencesManager.getPreferencesManager();
-        prefList = preferencesManager.getPrefList(this);
+        savedPrefList = preferencesManager.getPrefList(this);
+        preferenceItems = getPreferenceObjects();
 
+        // Set imageAdapter
         final GridView gridview = (GridView) findViewById(R.id.gridview);
-        gridview.setAdapter(new ImageAdapter(this));
+        adapter = new ImageAdapter(this, preferenceItems);
+        gridview.setAdapter(adapter);
 
         Button doneButton = (Button) findViewById(R.id.preferences_done);
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 
-                if (position == 0) {
-                    if (prefList.contains(COFFEE)) {
-                        prefList.remove(COFFEE);
-                    }
-                    else {
-                        prefList.add(COFFEE);
-                    }
+                // Decide if user removed or added corresponding preference
+                PreferenceItem pItem = preferenceItems.get(position);
+                if (pItem.checked) {
+                    pItem.checked = false;
+                    savedPrefList.remove(pItem.activityDescription);
                 }
-                else if (position == 1) {
-                    if (prefList.contains(FITNESS)) {
-                        prefList.remove(FITNESS);
-                    }
-                    else {
-                        prefList.add(FITNESS);
-                    }
+                else {
+                    pItem.checked = true;
+                    savedPrefList.add(pItem.activityDescription);
                 }
-                else if (position == 2) {
-                    if (prefList.contains(RESTAURANT)) {
-                        prefList.remove(RESTAURANT);
-                    }
-                    else {
-                        prefList.add(RESTAURANT);
-                    }
-                }
-                else if (position == 3) {
-                    if (prefList.contains(MOVIES)) {
-                        prefList.remove(MOVIES);
-                    }
-                    else {
-                        prefList.add(MOVIES);
-                    }
-                }
-                else if (position == 4) {
-                    if (prefList.contains(HIKING)) {
-                        prefList.remove(HIKING);
-                    }
-                    else {
-                        prefList.add(HIKING);
-                    }
-                }
-                else if (position == 5) {
-                    if (prefList.contains(BOWLING)) {
-                        prefList.remove(BOWLING);
-                    }
-                    else {
-                        prefList.add(BOWLING);
-                    }
-                }
-                else if (position == 6) {
-                    if (prefList.contains(READING)) {
-                        prefList.remove(READING);
-                    }
-                    else {
-                        prefList.add(READING);
-                    }
-                }
-                else if (position == 7) {
-                    if (prefList.contains(NIGHTCLUB)) {
-                        prefList.remove(NIGHTCLUB);
-                    }
-                    else {
-                        prefList.add(NIGHTCLUB);
-                    }
-                }
-                else if (position == 8) {
-                    if (prefList.contains(SHOPPING)) {
-                        prefList.remove(SHOPPING);
-                    }
-                    else {
-                        prefList.add(SHOPPING);
-                    }
-                }
+                adapter.notifyDataSetChanged();
             }
         });
 
@@ -128,19 +74,30 @@ public class Preferences extends AppCompatActivity {
                 finish();
             }
         });
-
-
     }
-
 
     @Override
     protected void onPause() {
         super.onPause();
-        /*for (int i = 0; i < prefList.size(); i++) {
-            Log.d("LOGGING!!!", "Position " + i + ": " + prefList.get(i));
-        }*/
-
         // Save preferences here
         preferencesManager.savePrefList(this);
+    }
+
+
+    private ArrayList<PreferenceItem> getPreferenceObjects() {
+        ArrayList<PreferenceItem> icons = new ArrayList<>();
+
+        // Add all icons and their tags
+        icons.add(new PreferenceItem(R.drawable.coffee, Preferences.COFFEE, savedPrefList.contains(Preferences.COFFEE)));
+        icons.add(new PreferenceItem(R.drawable.fitness, Preferences.FITNESS, savedPrefList.contains(Preferences.FITNESS)));
+        icons.add(new PreferenceItem(R.drawable.restaurant, Preferences.RESTAURANT, savedPrefList.contains(Preferences.RESTAURANT)));
+        icons.add(new PreferenceItem(R.drawable.movies, Preferences.MOVIES, savedPrefList.contains(Preferences.MOVIES)));
+        icons.add(new PreferenceItem(R.drawable.hiking, Preferences.HIKING, savedPrefList.contains(Preferences.HIKING)));
+        icons.add(new PreferenceItem(R.drawable.bowling, Preferences.BOWLING, savedPrefList.contains(Preferences.BOWLING)));
+        icons.add(new PreferenceItem(R.drawable.reading, Preferences.READING, savedPrefList.contains(Preferences.READING)));
+        icons.add(new PreferenceItem(R.drawable.nightclub, Preferences.NIGHTCLUB, savedPrefList.contains(Preferences.NIGHTCLUB)));
+        icons.add(new PreferenceItem(R.drawable.shopping, Preferences.SHOPPING, savedPrefList.contains(Preferences.SHOPPING)));
+
+        return icons;
     }
 }
