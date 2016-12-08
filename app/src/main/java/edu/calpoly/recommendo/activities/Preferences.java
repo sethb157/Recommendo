@@ -124,7 +124,6 @@ public class Preferences extends AppCompatActivity {
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //launch new intent
                 finish();
             }
         });
@@ -136,9 +135,9 @@ public class Preferences extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        /*for (int i = 0; i < prefList.size(); i++) {
+        for (int i = 0; i < prefList.size(); i++) {
             Log.d("LOGGING!!!", "Position " + i + ": " + prefList.get(i));
-        }*/
+        }
 
         // Save preferences here
         preferencesManager.savePrefList(this);
