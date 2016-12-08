@@ -49,8 +49,8 @@ public class DetailSuggestionActivity extends Activity {
 
         name.setText(s.getName());
         address.setText(s.getAddress());
-        type.setText(s.getType());
-        category.setText(s.getCategory());
+        category.setText(s.getType());
+        type.setText(s.getCategory());
 
         address_icon.setImageResource(R.drawable.address);
         type_icon.setImageResource(R.drawable.type);

@@ -25,26 +25,28 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
+        android:paddingTop="15dp"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="0dp"
-                android:layout_weight=".2"
-                android:layout_height="wrap_content"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:paddingLeft="16dp"
                 android:id="@+id/address_icon"/>
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_weight=".8"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAlignment="center"
                 android:textSize="20dp"
                 android:textColor="@color/black"
+                android:paddingLeft="16dp"
+                android:paddingTop="10dp"
                 android:id="@+id/address"/>
         </LinearLayout>
 
@@ -52,21 +54,22 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="0dp"
-                android:layout_weight=".2"
-                android:layout_height="wrap_content"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:paddingLeft="16dp"
                 android:id="@+id/type_icon"/>
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_weight=".8"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAlignment="center"
                 android:textSize="20dp"
                 android:textColor="@color/black"
+                android:paddingLeft="16dp"
+                android:paddingTop="10dp"
                 android:id="@+id/type"/>
         </LinearLayout>
 
@@ -76,18 +79,18 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="0dp"
-                android:layout_weight=".2"
-                android:layout_height="wrap_content"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:paddingLeft="16dp"
                 android:id="@+id/category_icon"/>
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_weight=".8"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAlignment="center"
                 android:textSize="20dp"
                 android:textColor="@color/black"
+                android:paddingLeft="16dp"
+                android:paddingTop="10dp"
                 android:id="@+id/category"/>
         </LinearLayout>
 

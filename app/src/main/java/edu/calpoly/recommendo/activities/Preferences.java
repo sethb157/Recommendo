@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -50,7 +53,7 @@ public class Preferences extends AppCompatActivity {
         adapter = new ImageAdapter(this, preferenceItems);
         gridview.setAdapter(adapter);
 
-        Button doneButton = (Button) findViewById(R.id.preferences_done);
+        //Button doneButton = (Button) findViewById(R.id.preferences_done);
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -60,8 +63,7 @@ public class Preferences extends AppCompatActivity {
                 if (pItem.checked) {
                     pItem.checked = false;
                     savedPrefList.remove(pItem.activityDescription);
-                }
-                else {
+                } else {
                     pItem.checked = true;
                     savedPrefList.add(pItem.activityDescription);
                 }
@@ -69,14 +71,14 @@ public class Preferences extends AppCompatActivity {
             }
         });
 
-        doneButton.setOnClickListener(new View.OnClickListener() {
+        /*doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //launch new intent
                 setResult(Activity.RESULT_OK, new Intent());
                 finish();
             }
-        });
+        });*/
     }
 
     @Override
@@ -102,5 +104,24 @@ public class Preferences extends AppCompatActivity {
         icons.add(new PreferenceItem(R.drawable.shopping, Preferences.SHOPPING, savedPrefList.contains(Preferences.SHOPPING)));
 
         return icons;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.preference_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.Done:
+                setResult(Activity.RESULT_OK, new Intent());
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

@@ -10,7 +10,7 @@
         android:gravity="center"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
-        android:textSize="45dp"
+        android:textSize="50dp"
         android:textColor="@color/niceTeal"
         android:text="@string/PreferencesTitle">
     </TextView>
@@ -23,17 +23,9 @@
         android:verticalSpacing="30dp"
         android:horizontalSpacing="5dp"
         android:stretchMode="columnWidth"
+        android:paddingTop="25dp"
         android:gravity="center">
     </GridView>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="66dp"
-        android:gravity="center"
-        android:id="@+id/preferences_done"
-        android:textColor="@color/DarkCyan"
-        android:background="@color/white"
-        android:text="@string/done">
-    </Button>
 
 </LinearLayout>
