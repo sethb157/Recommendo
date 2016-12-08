@@ -11,16 +11,22 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+
+import java.util.ArrayList;
 
 import edu.calpoly.recommendo.managers.AddressResultReceiver;
 import edu.calpoly.recommendo.managers.FetchAddressIntentService;
 import edu.calpoly.recommendo.R;
 import edu.calpoly.recommendo.adapters.MyAdapter;
 import edu.calpoly.recommendo.managers.PreferencesManager;
+import edu.calpoly.recommendo.managers.suggestions.Suggestion;
 import edu.calpoly.recommendo.managers.weather.scheme.WeatherJSON;
 import edu.calpoly.recommendo.managers.suggestions.SuggestionsManager;
 
@@ -33,6 +39,10 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
     private TextView cityTextView;
     private TextView weatherTextView;
     private ImageView weatherImageView;
+    private FrameLayout progressBarHolder;
+
+    private AlphaAnimation inAnimation;
+    private AlphaAnimation outAnimation;
 
     private RecyclerView rv;
     private static MyAdapter adapter;
@@ -50,34 +60,11 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
             startActivity(intent);
         }
 
-        BottomNavigationView bottomNavigationView = (BottomNavigationView)
-                findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.action_main:
-
-                                break;
-                            case R.id.action_map:
-                                Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
-                                startActivity(mapIntent);
-                                break;
-                            case R.id.action_pref:
-                                Intent prefIntent = new Intent(getApplicationContext(), Preferences.class);
-                                startActivity(prefIntent);
-                                break;
-                        }
-                        return false;
-                    }
-                }
-        );
-
         // Get UI handles
         cityTextView = (TextView)findViewById(R.id.city_name_text_view);
         weatherTextView = ((TextView) findViewById(R.id.weather_desc_text_view));
         weatherImageView = (ImageView) findViewById(R.id.weather_image_view);
+        progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
 
         rv = (RecyclerView) findViewById(R.id.rv);
         assert rv != null;
@@ -91,6 +78,36 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
         if (suggestionsManager.getSuggestions() != null) {
             this.newDataFetched();
         }
+
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_main:
+                                if (progressBarHolder != null && progressBarHolder.getVisibility() == View.GONE) {
+                                    if (suggestionsManager != null) {
+                                        suggestionsManager.updateSuggestions();
+                                    }
+                                    MainActivity.this.newDataFetched();
+                                }
+                                break;
+                            case R.id.action_map:
+                                Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
+                                startActivity(mapIntent);
+                                break;
+                            case R.id.action_pref:
+                                Intent prefIntent = new Intent(getApplicationContext(), Preferences.class);
+                                startActivityForResult(prefIntent, 0);
+                                break;
+                        }
+                        item.setChecked(false);
+                        return true;
+                    }
+                }
+        );
 
     }
 
@@ -135,14 +152,32 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
 
     @Override
     public void newDataFetched() {
+        progressBarHolder.bringToFront();
+        inAnimation = new AlphaAnimation(0f, 1f);
+        inAnimation.setDuration(200);
+        progressBarHolder.setAnimation(inAnimation);
+        progressBarHolder.setVisibility(View.VISIBLE);
         updateWeatherDescription(suggestionsManager.getLastWeatherRetrieved());
         updateCityName(suggestionsManager.getLastLocation());
         updateWeatherIcon(suggestionsManager.getLastWeatherRetrieved().getWeather().get(0).getIcon());
 
         adapter.mSuggestions = suggestionsManager.getSuggestions();
         adapter.notifyDataSetChanged();
+
+        outAnimation = new AlphaAnimation(1f, 0f);
+        outAnimation.setDuration(200);
+        progressBarHolder.setAnimation(outAnimation);
+        progressBarHolder.setVisibility(View.GONE);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (suggestionsManager != null) {
+            suggestionsManager.updateSuggestions();
+        }
+        MainActivity.this.newDataFetched();
+    }
 
     /**
      *

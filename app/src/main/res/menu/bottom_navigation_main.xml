@@ -3,20 +3,20 @@
     <item
         android:id="@+id/action_main"
         android:enabled="true"
-        android:title="@string/text_main"
-        android:icon="@drawable/home128"/>
+        android:title="@string/refresh"
+        android:icon="@drawable/refresh"/>
 
     <item
         android:id="@+id/action_map"
         android:enabled="true"
         android:title="@string/text_map"
-        android:icon="@drawable/home128"/>
+        android:icon="@drawable/globe1"/>
 
     <item
         android:id="@+id/action_pref"
         android:enabled="true"
         android:title="@string/text_pref"
-        android:icon="@drawable/home128"
+        android:icon="@drawable/settings"
         />
 
 </menu>

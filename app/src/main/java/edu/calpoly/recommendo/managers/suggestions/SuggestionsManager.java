@@ -94,7 +94,7 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
     /**
      * Updates places fetcher and then fetches new places
      */
-    private void updateSuggestions() {
+    public void updateSuggestions() {
         placesFetcher.longitude = Double.toString(lastLocation.getLongitude());
         placesFetcher.latitude = Double.toString(lastLocation.getLatitude());
         placesFetcher.placeTypes = getSearchTerms(lastWeatherRetrieved.getMain().getTemp(), false);

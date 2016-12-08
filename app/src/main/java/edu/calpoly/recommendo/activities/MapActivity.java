@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.bumptech.glide.load.resource.drawable.DrawableResource;
@@ -36,6 +37,8 @@ import edu.calpoly.recommendo.R;
 import edu.calpoly.recommendo.managers.suggestions.Suggestion;
 import edu.calpoly.recommendo.managers.suggestions.SuggestionsManager;
 
+import static com.google.android.gms.plus.PlusOneDummyView.TAG;
+
 /**
  * Created by Dan on 11/27/2016.
  */
@@ -53,29 +56,29 @@ public class MapActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        BottomNavigationView bottomNavigationView = (BottomNavigationView)
-                findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.action_main:
-                                Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
-                                startActivity(mainIntent);
-                                break;
-                            case R.id.action_map:
-
-                                break;
-                            case R.id.action_pref:
-                                Intent prefIntent = new Intent(getApplicationContext(), Preferences.class);
-                                startActivity(prefIntent);
-                                break;
-                        }
-                        return false;
-                    }
-                }
-        );
+//        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+//                findViewById(R.id.bottom_navigation);
+//        bottomNavigationView.setOnNavigationItemSelectedListener(
+//                new BottomNavigationView.OnNavigationItemSelectedListener() {
+//                    @Override
+//                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//                        switch (item.getItemId()) {
+//                            case R.id.action_main:
+//                                Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+//                                startActivity(mainIntent);
+//                                break;
+//                            case R.id.action_map:
+//
+//                                break;
+//                            case R.id.action_pref:
+//                                Intent prefIntent = new Intent(getApplicationContext(), Preferences.class);
+//                                startActivity(prefIntent);
+//                                break;
+//                        }
+//                        return false;
+//                    }
+//                }
+//        );
 
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -95,8 +98,6 @@ public class MapActivity extends Activity
                 getFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.container_map, mapFragment);
         fragmentTransaction.commit();
-
-
 
         mapFragment.getMapAsync(this);
     }
@@ -128,28 +129,59 @@ public class MapActivity extends Activity
         }
 
         mSuggestions = SuggestionsManager.getSuggestions();
-        for (Suggestion item : mSuggestions) {
-            if (item.getType() != null && item.getType().equals(SuggestionsManager.TYPE_ACTIVITY)) {
-                MarkerOptions marker = new MarkerOptions()
-                        .position(new LatLng(item.getLatitude(), item.getLongitude()))
-                        .title(item.getName());
-                mMap.addMarker(marker);
+        if (mSuggestions != null) {
+            for (Suggestion item : mSuggestions) {
+                if (item.getType() != null && item.getType().equals(SuggestionsManager.TYPE_ACTIVITY)) {
+                    float color;
+                    switch (item.getCategory()) {
+                        case "movie_rental":
+                            color = BitmapDescriptorFactory.HUE_AZURE;
+                            break;
+                        case "movie_theater":
+                            color = BitmapDescriptorFactory.HUE_BLUE;
+                            break;
+                        case "cafe":
+                            color = BitmapDescriptorFactory.HUE_ORANGE;
+                            break;
+                        case "gym":
+                            color = BitmapDescriptorFactory.HUE_YELLOW;
+                            break;
+                        case "restaurant":
+                            color = BitmapDescriptorFactory.HUE_RED;
+                            break;
+                        case "park":
+                            color = BitmapDescriptorFactory.HUE_GREEN;
+                            break;
+                        default:
+                            color = BitmapDescriptorFactory.HUE_VIOLET;
+                    }
+                    Log.d(TAG, "onMapReady: " + item.getCategory());
+                    MarkerOptions marker = new MarkerOptions()
+                            .position(new LatLng(item.getLatitude(), item.getLongitude()))
+                            .title(item.getName())
+                            .icon(BitmapDescriptorFactory.defaultMarker(color));
+                    mMap.addMarker(marker);
+                }
             }
         }
+
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
                 String title = marker.getTitle();
                 int key = 0;
-                for (Suggestion item : mSuggestions) {
-                    if (item.getName() != null && item.getName().equals(title)) {
-                        Intent myIntent = new Intent(getApplicationContext(), DetailSuggestionActivity.class);
-                        myIntent.putExtra("key", key); //Optional parameters
-                        startActivity(myIntent);
-                        break;
+                if (mSuggestions != null) {
+                    for (Suggestion item : mSuggestions) {
+                        if (item.getName() != null && item.getName().equals(title)) {
+                            Intent myIntent = new Intent(getApplicationContext(), DetailSuggestionActivity.class);
+                            myIntent.putExtra("key", key); //Optional parameters
+                            startActivity(myIntent);
+                            break;
+                        }
+                        key++;
                     }
-                    key++;
                 }
+
             }
         });
 
