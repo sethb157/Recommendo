@@ -1,5 +1,7 @@
 package edu.calpoly.recommendo.activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -71,6 +73,7 @@ public class Preferences extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //launch new intent
+                setResult(Activity.RESULT_OK, new Intent());
                 finish();
             }
         });
