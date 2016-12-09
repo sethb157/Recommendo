@@ -22,7 +22,7 @@
             <LinearLayout
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
-                android:background="@color/Teal"
+                android:background="@color/niceTeal"
                 android:elevation="10dp"
                 android:gravity="center"
                 android:orientation="vertical"
@@ -51,17 +51,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="SUGGESTIONS"
+                    android:text="@string/suggestions"
                     android:textSize="40sp"
                     android:textStyle="normal"
-                    android:textColor="@color/Teal"/>
+                    android:textColor="@color/niceTeal"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="for today"
+                    android:text="@string/for_today"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="@color/Teal"/>
+                    android:textColor="@color/niceTeal"/>
 
             </LinearLayout>
         </LinearLayout>
@@ -115,7 +115,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/topBarBlue"
-        app:itemBackground="@color/topBarBlue"
+        app:itemBackground="@color/niceTeal"
         app:itemIconTint="@color/white"
         app:itemTextColor="@color/white"
         app:menu="@menu/bottom_navigation_main" />

@@ -17,7 +17,7 @@
             android:id="@+id/_suggestion_image_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/maroon"
+            android:background="@color/nicePink"
             android:scaleType="centerCrop"
             android:tint="@color/white"
             android:padding="20dp"

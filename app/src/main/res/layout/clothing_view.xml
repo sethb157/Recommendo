@@ -12,7 +12,7 @@
         android:src="@drawable/biking"
         android:scaleType="centerInside"
         android:layout_margin="10dp"
-        android:tint="@color/Teal"/>
+        android:tint="@color/niceTeal"/>
     <TextView
         android:id="@+id/clothing_text_view"
         android:layout_width="wrap_content"

@@ -3,6 +3,7 @@ package edu.calpoly.recommendo.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.location.Location;
+import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -12,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -118,6 +120,11 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
         // If suggestions already exist, trigger their retrieval manually
         if (suggestionsManager.getSuggestions() != null) {
             this.newDataFetched();
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().setStatusBarColor(getResources().getColor(R.color.niceTeal, null));
         }
     }
 

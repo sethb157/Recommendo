@@ -9,4 +9,6 @@
     <string name="text_map">Map</string>
     <string name="text_pref">Preferences</string>
     <string name="refresh">Refresh</string>
+    <string name="for_today">for today</string>
+    <string name="suggestions">SUGGESTIONS</string>
 </resources>
