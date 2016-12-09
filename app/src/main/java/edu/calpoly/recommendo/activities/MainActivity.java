@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
         if (suggestionsManager != null) {
             suggestionsManager.updateSuggestions();
         }
-        MainActivity.this.newDataFetched();
+//        MainActivity.this.newDataFetched();
     }
 
     /**

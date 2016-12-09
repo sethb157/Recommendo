@@ -363,11 +363,13 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
         List<String> poorWeatherList = Arrays.asList(poorWeatherAvoidActivities);
 
         for (String suggestedActivity : suggestedActivities) {
-            if (rainOrSnow && !poorWeatherList.contains(suggestedActivity)) {
-                filteredPrefs.add(suggestedActivity);
-            }
-            else {
-                filteredPrefs.add(suggestedActivity);
+            if (prefList.contains(suggestedActivity)) {
+                if (rainOrSnow && !poorWeatherList.contains(suggestedActivity)) {
+                    filteredPrefs.add(suggestedActivity);
+                }
+                else {
+                    filteredPrefs.add(suggestedActivity);
+                }
             }
         }
 
