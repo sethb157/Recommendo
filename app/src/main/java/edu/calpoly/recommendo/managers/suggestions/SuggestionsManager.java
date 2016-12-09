@@ -1,10 +1,12 @@
 package edu.calpoly.recommendo.managers.suggestions;
 
 import android.Manifest;
+import android.app.Presentation;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -18,7 +20,9 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import edu.calpoly.recommendo.R;
 import edu.calpoly.recommendo.activities.Preferences;
@@ -77,6 +81,32 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
         map.put(BOTTOM_SNOWPANTS, R.drawable.pants);
 
         nameImageMapping = map;
+    }
+
+    /**
+     * public static final String COFFEE = "coffee";
+     public static final String FITNESS = "fitness";
+     public static final String RESTAURANT = "restaurant";
+     public static final String MOVIES = "movies";
+     public static final String HIKING = "hiking";
+     public static final String BOWLING = "bowling";
+     public static final String READING = "reading";
+     public static final String NIGHTCLUB = "nightclub";
+     public static final String SHOPPING = "shopping";
+
+     */
+    private static ArrayMap<String, String[]> preferenceSearchMap;
+    static {
+        preferenceSearchMap = new ArrayMap<>();
+        preferenceSearchMap.put(Preferences.COFFEE, new String[]{"cafe"});
+        preferenceSearchMap.put(Preferences.FITNESS, new String[]{"gym"});
+        preferenceSearchMap.put(Preferences.RESTAURANT, new String[]{"restaurant", "bakery"});
+        preferenceSearchMap.put(Preferences.MOVIES, new String[]{"movie_theater, movie_rental"});
+        preferenceSearchMap.put(Preferences.HIKING, new String[]{"park"});
+        preferenceSearchMap.put(Preferences.BOWLING, new String[]{"bowling_alley"});
+        preferenceSearchMap.put(Preferences.READING, new String[]{"library"});
+        preferenceSearchMap.put(Preferences.NIGHTCLUB, new String[]{"night_club"});
+        preferenceSearchMap.put(Preferences.SHOPPING, new String[]{"shopping_mall"});
     }
 
     private PreferencesManager preferencesManager;
@@ -151,6 +181,7 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
 
         // Parse through fetch results and generate new suggestions
         for (String searchTerm : fetchResults.keySet()) {
+
             PlacesResult placesResult = fetchResults.get(searchTerm);
             if (placesResult.getResults().isEmpty()) continue;
 
@@ -260,17 +291,7 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
         }
     }
 
-
-    public class LocationServicesNotEnabledException extends Exception {
-        public LocationServicesNotEnabledException(String message) {
-            super(message);
-        }
-
-    }
-
     /* End location stuff*/
-
-
 
     /* Begin Weather*/
     private WeatherFetcher weatherFetcher;
@@ -308,130 +329,55 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
     /*End Weather*/
 
 
+    // Below 50, suggest indoor activities
+    static private String[] below50Activities = {Preferences.BOWLING, Preferences.MOVIES, Preferences.READING};
+
+    // If its a nice day out, suggest social activities
+    static private String[] below80Activities = {Preferences.FITNESS, Preferences.COFFEE, Preferences.NIGHTCLUB, Preferences.RESTAURANT};
+
+    // Its warm out, suggest some active options
+    static private String[] above80Activities = {Preferences.SHOPPING, Preferences.HIKING, Preferences.FITNESS};
+
+    // Ignore these activities if the weather is rough
+    static private String[] poorWeatherAvoidActivities = {Preferences.HIKING, Preferences.NIGHTCLUB, Preferences.SHOPPING};
+
     private ArrayList<String> getSearchTerms(double avgTemp, boolean rainOrSnow) {
         ArrayList<String> prefList = preferencesManager.getPrefList(preferencesContext);
         ArrayList<String> searchTerms = new ArrayList<>();
-        if (prefList == null) return searchTerms;
-        if (avgTemp <= 30) {
-            if (prefList.contains(Preferences.MOVIES)) {
-                searchTerms.add("movie_rental");
-                searchTerms.add("movie_theater");
-            }
-            if (prefList.contains(Preferences.COFFEE)) {
-                searchTerms.add("cafe");
-            }
 
+        // Compare user's preferences to suggestions
+        String[] suggestedActivities;
+        if (avgTemp < 50) {
+            suggestedActivities = below50Activities;
         }
-        else if (avgTemp <= 55) {
-            if (prefList.contains(Preferences.COFFEE)) {
-                searchTerms.add("cafe");
-            }
-            if (prefList.contains(Preferences.FITNESS)) {
-                searchTerms.add("gym");
-
-            }
-            if (prefList.contains(Preferences.MOVIES)) {
-                searchTerms.add("movie_rental");
-                searchTerms.add("movie_theater");
-            }
-            if (!rainOrSnow) {
-                if (prefList.contains(Preferences.RESTAURANT)) {
-                    searchTerms.add("restaurant");
-                }
-            }
-        }
-        else if (avgTemp <= 70) {
-            if (prefList.contains(Preferences.COFFEE)) {
-                searchTerms.add("cafe");
-            }
-            if (prefList.contains(Preferences.FITNESS)) {
-                searchTerms.add("gym");
-
-            }
-            if (prefList.contains(Preferences.MOVIES)) {
-                searchTerms.add("movie_rental");
-                searchTerms.add("movie_theater");
-            }
-            if (!rainOrSnow) {
-                if (prefList.contains(Preferences.RESTAURANT)) {
-                    searchTerms.add("restaurant");
-                }
-            }
-
-        }
-        else if (avgTemp <= 85) {
-
-            if (prefList.contains(Preferences.HIKING)) {
-                //TODO: Add search terms to placesAPI
-
-            }
-
-//            if (!rainOrSnow) {
-//                if (prefList.contains(Preferences.BIKING)) {
-//                    // park
-//
-//                }
-//                if (prefList.contains(Preferences.SWIMMING)) {
-//                    // search: swimming pool
-//
-//                }
-//                if (prefList.contains(Preferences.GOLF)) {
-//                    // search: golf
-//
-//                }
-//            }
-            if (prefList.contains(Preferences.RESTAURANT)) {
-                searchTerms.add("restaurant");
-            }
-            if (prefList.contains(Preferences.FITNESS)) {
-                searchTerms.add("gym");
-
-            }
-            if (prefList.contains(Preferences.MOVIES)) {
-                searchTerms.add("movie_rental");
-                searchTerms.add("movie_theater");
-
-            }
-
-
+        else if (avgTemp < 80) {
+            suggestedActivities = below80Activities;
         }
         else {
-            searchTerms.add("park");
-//            if (prefList.contains(Preferences.SWIMMING)) {
-//                // search: swimming pool
-//
-//            }
-//            if (prefList.contains(Preferences.GOLF)) {
-//                // search: golf
-//
-//            }
-//            if (prefList.contains(Preferences.BIKING)) {
-//                // park
-//
-//            }
-//            if (prefList.contains(Preferences.HIKING)) {
-//                // search: hiking area
-//
-//            }
-//            if (prefList.contains(Preferences.RESTAURANT)) {
-//                // restaurant
-//
-//            }
-//            if (prefList.contains(Preferences.FITNESS)) {
-//                // gym
-//
-//            }
-//            if (prefList.contains(Preferences.RUNNING)) {
-//                // park
-//                // radius: 1 mile away
-//
-//            }
+            suggestedActivities = above80Activities;
         }
 
-        // If user has no tastes, add some default options
-        if (searchTerms.isEmpty()) {
-            searchTerms.add("liquor_store");
-            searchTerms.add("police");
+        // Copy values to an arraylist
+        // Filter out options related to rain or snow if necessary
+        ArrayList<String> filteredPrefs = new ArrayList<>();
+        List<String> poorWeatherList = Arrays.asList(poorWeatherAvoidActivities);
+
+        for (String suggestedActivity : suggestedActivities) {
+            if (rainOrSnow && !poorWeatherList.contains(suggestedActivity)) {
+                filteredPrefs.add(suggestedActivity);
+            }
+            else {
+                filteredPrefs.add(suggestedActivity);
+            }
+        }
+
+        // Now actually add search terms
+        String[] terms;
+        for (String filteredPref : filteredPrefs) {
+            terms = preferenceSearchMap.get(filteredPref);
+            for (String term : terms) {
+                searchTerms.add(term);
+            }
         }
 
         return searchTerms;
