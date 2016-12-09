@@ -37,7 +37,7 @@ public class SuggestionsFirstLevelAdapter extends RecyclerView.Adapter<FirstLeve
 
     @Override
     public void onBindViewHolder(FirstLevelViewHolder holder, int position) {
-        holder.bindToSuggestions(suggestionLists.get(position), keysInOrder.get(position));
+        holder.bindToSuggestions(suggestionLists.get(position), keysInOrder.get(position), position);
     }
 
     @Override
@@ -67,10 +67,11 @@ class FirstLevelViewHolder extends RecyclerView.ViewHolder {
         recyclerView.setAdapter(adapter);
     }
 
-    public void bindToSuggestions(ArrayList<Suggestion> suggestions, String categoryTitle) {
+    public void bindToSuggestions(ArrayList<Suggestion> suggestions, String categoryTitle, int categoryPosition) {
         categoryTextView.setText(categoryTitle.toUpperCase());
         mySuggestions = suggestions;
         adapter.setSuggestions(suggestions);
+        adapter.categoryIndex = categoryPosition;
         adapter.notifyDataSetChanged();
     }
 

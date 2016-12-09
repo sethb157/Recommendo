@@ -16,6 +16,7 @@ public class DetailSuggestionActivity extends Activity {
 
     private SuggestionsManager suggestionsManager;
     private final static String PLACES_API_KEY = "AIzaSyAWIWJ9WuWlQ2hHIlJgqCLBRXpmB3pMY2Y";
+    public final static String CATEGORY_INDEX_KEY = "recommendo_category_index";
 
     private TextView name;
     private TextView address;
@@ -26,17 +27,25 @@ public class DetailSuggestionActivity extends Activity {
     private ImageView type_icon;
     private ImageView category_icon;
     private int index;
+    private int categoryIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail_suggestion);
 
+        categoryIndex = getIntent().getIntExtra(CATEGORY_INDEX_KEY, -1);
         index = getIntent().getIntExtra("key", 0);
 
         suggestionsManager = SuggestionsManager.getSharedManager();
 
-        final Suggestion s = suggestionsManager.getSuggestions().get(index);
+        Suggestion s;
+        if (categoryIndex > -1) {
+            s = suggestionsManager.getSuggestionsByCategory().get(categoryIndex).get(index);
+        }
+        else {
+            s = suggestionsManager.getSuggestions().get(index);
+        }
 
         name = (TextView) findViewById(R.id.name);
         address = (TextView) findViewById(R.id.address);

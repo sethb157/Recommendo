@@ -1,5 +1,6 @@
 package edu.calpoly.recommendo.adapters;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 import edu.calpoly.recommendo.R;
+import edu.calpoly.recommendo.activities.DetailSuggestionActivity;
 import edu.calpoly.recommendo.managers.suggestions.Suggestion;
 
 /**
@@ -21,6 +23,9 @@ import edu.calpoly.recommendo.managers.suggestions.Suggestion;
 public class SuggestionsSecondLevelAdapter extends RecyclerView.Adapter<SecondLevelViewHolder> {
 
     private ArrayList<Suggestion> suggestions = new ArrayList<>();
+    // This is for passing along to the detail view
+    // Since the data source is nested
+    public int categoryIndex = -1;
 
     public  void setSuggestions(ArrayList<Suggestion> suggestions) {this.suggestions = suggestions;}
 
@@ -32,6 +37,7 @@ public class SuggestionsSecondLevelAdapter extends RecyclerView.Adapter<SecondLe
     @Override
     public void onBindViewHolder(SecondLevelViewHolder holder, int position) {
         holder.bindToSuggestion(suggestions.get(position));
+        holder.categoryPosition = categoryIndex;
     }
 
     @Override
@@ -45,6 +51,7 @@ class SecondLevelViewHolder extends RecyclerView.ViewHolder {
     public TextView textView;
     public ImageView imageView;
     public View itemView;
+    public int categoryPosition;
 
     public SecondLevelViewHolder(View itemView) {
         super(itemView);
@@ -53,6 +60,16 @@ class SecondLevelViewHolder extends RecyclerView.ViewHolder {
         this.itemView = itemView;
         textView = (TextView) itemView.findViewById(R.id.suggestion_text_view);
         imageView = (ImageView) itemView.findViewById(R.id._suggestion_image_view);
+
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(v.getContext(), DetailSuggestionActivity.class);
+                myIntent.putExtra(DetailSuggestionActivity.CATEGORY_INDEX_KEY, categoryPosition);
+                myIntent.putExtra("key", getAdapterPosition());
+                v.getContext().startActivity(myIntent);
+            }
+        });
     }
 
     public void bindToSuggestion(Suggestion suggestion) {
