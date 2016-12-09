@@ -68,7 +68,7 @@ class FirstLevelViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindToSuggestions(ArrayList<Suggestion> suggestions, String categoryTitle, int categoryPosition) {
-        categoryTextView.setText(categoryTitle.toUpperCase());
+        categoryTextView.setText(categoryTitle.toUpperCase().replaceAll("_", " "));
         mySuggestions = suggestions;
         adapter.setSuggestions(suggestions);
         adapter.categoryIndex = categoryPosition;

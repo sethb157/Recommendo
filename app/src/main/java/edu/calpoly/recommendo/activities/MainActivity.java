@@ -63,8 +63,6 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
             startActivity(intent);
         }
 
-        progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
-
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(
@@ -77,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
                                     if (suggestionsManager != null) {
                                         suggestionsManager.updateSuggestions();
                                     }
-                                    MainActivity.this.newDataFetched();
                                 }
                                 break;
                             case R.id.action_map:
@@ -85,8 +82,10 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
                                 startActivity(mapIntent);
                                 break;
                             case R.id.action_pref:
-                                Intent prefIntent = new Intent(getApplicationContext(), Preferences.class);
-                                startActivityForResult(prefIntent, 0);
+                                if (progressBarHolder != null && progressBarHolder.getVisibility() == View.GONE) {
+                                    Intent prefIntent = new Intent(getApplicationContext(), Preferences.class);
+                                    startActivityForResult(prefIntent, 0);
+                                }
                                 break;
                         }
                         item.setChecked(false);
@@ -98,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements SuggestionsManage
         // Get UI handles
         weatherImageView = (ImageView) findViewById(R.id.weather_image_view);
         temperatureTextView = (TextView) findViewById(R.id.temperature_text_view);
+        progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
 
         // Clothing recyclerview
         clothingRecyclerView = (RecyclerView) findViewById(R.id.clothing_recycler_view);

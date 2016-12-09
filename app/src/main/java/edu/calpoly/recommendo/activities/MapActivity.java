@@ -47,7 +47,6 @@ public class MapActivity extends Activity
         implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, LocationListener {
 
     private GoogleMap mMap;
-    private LocationManager mLocationManager;
     private Location mLocation;
     private ArrayList<Suggestion> mSuggestions;
 
@@ -56,50 +55,18 @@ public class MapActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-//        BottomNavigationView bottomNavigationView = (BottomNavigationView)
-//                findViewById(R.id.bottom_navigation);
-//        bottomNavigationView.setOnNavigationItemSelectedListener(
-//                new BottomNavigationView.OnNavigationItemSelectedListener() {
-//                    @Override
-//                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                        switch (item.getItemId()) {
-//                            case R.id.action_main:
-//                                Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
-//                                startActivity(mainIntent);
-//                                break;
-//                            case R.id.action_map:
-//
-//                                break;
-//                            case R.id.action_pref:
-//                                Intent prefIntent = new Intent(getApplicationContext(), Preferences.class);
-//                                startActivity(prefIntent);
-//                                break;
-//                        }
-//                        return false;
-//                    }
-//                }
-//        );
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (!(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 400, 1000, this);
 
-        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+            MapFragment mapFragment = MapFragment.newInstance();
+            FragmentTransaction fragmentTransaction =
+                    getFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.container_map, mapFragment);
+            fragmentTransaction.commit();
+
+            mapFragment.getMapAsync(this);
         }
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 400, 1000, this);
-
-        MapFragment mapFragment = MapFragment.newInstance();
-        FragmentTransaction fragmentTransaction =
-                getFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.container_map, mapFragment);
-        fragmentTransaction.commit();
-
-        mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -107,18 +74,7 @@ public class MapActivity extends Activity
 
         mMap = googleMap;
         mMap.setOnMarkerClickListener(this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            //return;
-        }
-        else {
+        if (!(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
             mMap.setMyLocationEnabled(true);
 
             if (mLocation != null) {
@@ -201,7 +157,6 @@ public class MapActivity extends Activity
         if (mMap != null) {
             mMap.animateCamera(cameraUpdate);
         }
-        //mLocationManager.removeUpdates(this);
 
     }
 
