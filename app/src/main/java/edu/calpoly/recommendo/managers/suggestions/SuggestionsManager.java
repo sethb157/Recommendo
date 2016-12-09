@@ -63,9 +63,19 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
     public static Integer getResourceIDForName(String name){return nameImageMapping.get(name);}
     static {
         ArrayMap<String, Integer> map = new ArrayMap<>();
+        map.put(HEADWEAR_BEANIE, R.drawable.beanie);
+        map.put(HEADWEAR_HAT, R.drawable.hat);
+        map.put(HEADWEAR_UMBRELLA, R.drawable.umbrella);
+        map.put(TOP_SNOWJACKET, R.drawable.jacket);
+        map.put(TOP_RAINJACKET, R.drawable.jacket);
         map.put(TOP_SWEATSHIRT, R.drawable.sweatshirt);
+        map.put(TOP_LONGSLEEVE, R.drawable.sweatshirt);
         map.put(TOP_TSHIRT, R.drawable.shirt);
+        map.put(TOP_TANKTOP, R.drawable.shirt);
         map.put(BOTTOM_PANTS, R.drawable.pants);
+        map.put(BOTTOM_SHORTS, R.drawable.shorts);
+        map.put(BOTTOM_SNOWPANTS, R.drawable.pants);
+
         nameImageMapping = map;
     }
 
@@ -135,7 +145,7 @@ public class SuggestionsManager implements GoogleApiClient.ConnectionCallbacks, 
         ArrayList<String> keys = new ArrayList<>();
 
         // Retrieve and add clothing suggestions
-        ArrayList<Suggestion> newClothingSuggestions = retrieveClothingSuggestions(lastWeatherRetrieved.getMain().getTemp(), false);
+        ArrayList<Suggestion> newClothingSuggestions = retrieveClothingSuggestions(lastWeatherRetrieved.getMain().getTemp(), lastWeatherRetrieved.isRainingOrSnowing());
         this.clothingSuggestions = newClothingSuggestions;
         suggestions.addAll(clothingSuggestions);
 

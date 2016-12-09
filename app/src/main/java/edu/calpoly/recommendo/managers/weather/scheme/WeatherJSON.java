@@ -22,6 +22,18 @@ public class WeatherJSON {
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
+     *
+     * @return true/false if description contains rain or snow
+     */
+    public boolean isRainingOrSnowing() {
+        String weatherDesc = getWeather().get(0).getDescription();
+        if (weatherDesc == null) return false;
+
+        weatherDesc = weatherDesc.toLowerCase();
+        return weatherDesc.contains("rain") || weatherDesc.contains("snow");
+    }
+
+    /**
      * 
      * @return
      *     The coord
