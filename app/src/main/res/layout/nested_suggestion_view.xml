@@ -16,7 +16,7 @@
             android:text="Cafe"
             android:textColor="@color/niceTeal"
             android:textSize="25sp"
-            android:layout_margin="5dp"/>
+            android:layout_margin="5dp" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView

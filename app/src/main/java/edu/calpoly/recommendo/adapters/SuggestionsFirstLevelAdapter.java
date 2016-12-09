@@ -68,11 +68,25 @@ class FirstLevelViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindToSuggestions(ArrayList<Suggestion> suggestions, String categoryTitle, int categoryPosition) {
-        categoryTextView.setText(categoryTitle.toUpperCase().replaceAll("_", " "));
+        categoryTextView.setText(capitalizeWords(categoryTitle.replaceAll("_", " ")));
         mySuggestions = suggestions;
         adapter.setSuggestions(suggestions);
         adapter.categoryIndex = categoryPosition;
         adapter.notifyDataSetChanged();
+    }
+
+    private String capitalizeWords(String sentence) {
+        String[] words = sentence.split(" ");
+        StringBuilder builder;
+        String newString = "";
+        char first;
+        for (String word : words) {
+            builder = new StringBuilder(word.toLowerCase());
+            first = builder.charAt(0);
+            builder.setCharAt(0, Character.toUpperCase(first));
+            newString = newString + " " + builder.toString();
+        }
+        return newString;
     }
 
 }
